@@ -1,0 +1,986 @@
+{
+  "project": "prowler-cloud/prowler",
+  "tag": "5.44.0",
+  "commit": "499fd637f3393b485833b08cdaf4172917c5698e",
+  "tree_sha": "499fd637f3393b485833b08cdaf4172917c5698e",
+  "tree_truncated": false,
+  "scope": "selected CLI/check/output/provider/secret-related source and tests only; 122 regular files; no runtime",
+  "files": [
+    {
+      "path": "LICENSE",
+      "status": "downloaded-blob-verified",
+      "size": 11348,
+      "git_blob_sha": "9b4991a625e7fc86f865479ee617d0648b506ad8",
+      "sha256": "a0666bd9911fb4b653372b3721c500fdbd097ed1ca83466adb07e7ae7afb82e0",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/LICENSE"
+    },
+    {
+      "path": "README.md",
+      "status": "downloaded-blob-verified",
+      "size": 22093,
+      "git_blob_sha": "2851101f05ed5e81527f12be23c61637c2ec9238",
+      "sha256": "7f0fbdb7e980596994bbc6da14202f6f5726f2016fb53f635d872a0aa117c735",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/README.md"
+    },
+    {
+      "path": "permissions/prowler-additions-policy.json",
+      "status": "downloaded-blob-verified",
+      "size": 2550,
+      "git_blob_sha": "be17979d2eecb7a9ab1b28fca6a38e61dc925ef0",
+      "sha256": "11b010b9bbf094cb90a8a08c2220a514ecd3bb9b2511c3b40331cd82b29b022b",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/permissions/prowler-additions-policy.json"
+    },
+    {
+      "path": "permissions/prowler-azure-custom-role.json",
+      "status": "downloaded-blob-verified",
+      "size": 605,
+      "git_blob_sha": "58f2c97126dce614f9a8b27e94cc9f218302d021",
+      "sha256": "2c33ae911eb81aa7ce8974151988c8e3ac7e384a29fbb1c105c639fa0635b897",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/permissions/prowler-azure-custom-role.json"
+    },
+    {
+      "path": "permissions/templates/cloudformation/prowler-scan-role.yml",
+      "status": "downloaded-blob-verified",
+      "size": 26760,
+      "git_blob_sha": "d31dea98466bd8b33a5b78794846471ee7a2d19c",
+      "sha256": "327c63774e3566e14d4f2839e62ffa781a4575bc243e2c96c61fe2cef3396617",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/permissions/templates/cloudformation/prowler-scan-role.yml"
+    },
+    {
+      "path": "prowler-cli.py",
+      "status": "downloaded-blob-verified",
+      "size": 124,
+      "git_blob_sha": "eac465ca051e0277d162a80cf9eb68c813babff4",
+      "sha256": "dcd288f55fa2688fca2b5ac240150fc1777a069b20d97836238043689989c5b5",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler-cli.py"
+    },
+    {
+      "path": "prowler/__main__.py",
+      "status": "downloaded-blob-verified",
+      "size": 70105,
+      "git_blob_sha": "b9de47c07b820cfce0c9372e3bf20dfe7c73ebcf",
+      "sha256": "dd56a89d57a559a2cda1fd32f074a7c1f2aeeee8144352c3098f10bb38296876",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/__main__.py"
+    },
+    {
+      "path": "prowler/config/config.py",
+      "status": "downloaded-blob-verified",
+      "size": 14593,
+      "git_blob_sha": "928f7fd5206e4413c70c7fe191b3770ec17c734a",
+      "sha256": "2af10a43ebf2dd31455ef08c379d566bbf64a82af2f573ef9016c6c11e004241",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/config/config.py"
+    },
+    {
+      "path": "prowler/providers/aws/aws_provider.py",
+      "status": "downloaded-blob-verified",
+      "size": 89751,
+      "git_blob_sha": "37067bb51621027a101e8850e02e2483cf0a7041",
+      "sha256": "95d83eda35a3685d4e2ad931ca22ccd9571ce6470b8db2f9d2ec9c04665cdc27",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/aws_provider.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/__init__.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_automatic_rotation_enabled/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_automatic_rotation_enabled/__init__.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_automatic_rotation_enabled/secretsmanager_automatic_rotation_enabled.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3027,
+      "git_blob_sha": "4c8a1308ee2fd2cdc888d77a4a7225d4f1cba58a",
+      "sha256": "8c03ced02ce91ee6e1a68ed4d2dc48508a8fb1dfa9752aae9996b933c268686e",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_automatic_rotation_enabled/secretsmanager_automatic_rotation_enabled.metadata.json"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_automatic_rotation_enabled/secretsmanager_automatic_rotation_enabled.py",
+      "status": "downloaded-blob-verified",
+      "size": 901,
+      "git_blob_sha": "e3c41c04972791ae92457f7798bf913d06b8e69b",
+      "sha256": "ed8ca82f14b0e2df7c7a781ecaa83dc74c9f749d5f8938135b005d3250b701dd",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_automatic_rotation_enabled/secretsmanager_automatic_rotation_enabled.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_client.py",
+      "status": "downloaded-blob-verified",
+      "size": 232,
+      "git_blob_sha": "9b3538f19ebc3fae2a465ce94557fc83d8920d47",
+      "sha256": "0248cd7e7bb268d087e0a9c22e1cab3fbffb3f24066839d5ce21ea0507d36531",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_client.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_has_restrictive_resource_policy/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_has_restrictive_resource_policy/__init__.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_has_restrictive_resource_policy/secretsmanager_has_restrictive_resource_policy.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 4709,
+      "git_blob_sha": "b1621aff023a394251e62abb825be88fe3fbdaac",
+      "sha256": "71436071ca1a2aa3286f187df01bdb16c8dd88f59f8e138d03b5e722b166baca",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_has_restrictive_resource_policy/secretsmanager_has_restrictive_resource_policy.metadata.json"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_has_restrictive_resource_policy/secretsmanager_has_restrictive_resource_policy.py",
+      "status": "downloaded-blob-verified",
+      "size": 31033,
+      "git_blob_sha": "d7115ebd23698b45d2dae868a3cef1c20988ae29",
+      "sha256": "2ba3b358984b909b5459a9aa5be252e9112e2853812c7d872450788db032b212",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_has_restrictive_resource_policy/secretsmanager_has_restrictive_resource_policy.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_not_publicly_accessible/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_not_publicly_accessible/__init__.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_not_publicly_accessible/secretsmanager_not_publicly_accessible.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3942,
+      "git_blob_sha": "e59d9bf7d86f5d487b8df835350605e47f772e3e",
+      "sha256": "883c81b8450744355461cab0fc35d6e1d4d5fd08e095f9fb6ee292a9ebc55eb3",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_not_publicly_accessible/secretsmanager_not_publicly_accessible.metadata.json"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_not_publicly_accessible/secretsmanager_not_publicly_accessible.py",
+      "status": "downloaded-blob-verified",
+      "size": 1090,
+      "git_blob_sha": "abc82ab3c78a250ec52c7f013aa756921ed6fbe7",
+      "sha256": "2fce38c92926eddf66fd7568a5f184d5236cc233039c507be001cfa7fc05c9a1",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_not_publicly_accessible/secretsmanager_not_publicly_accessible.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_secret_rotated_periodically/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_secret_rotated_periodically/__init__.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_secret_rotated_periodically/secretsmanager_secret_rotated_periodically.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3360,
+      "git_blob_sha": "ea2d4ce22db9a80111484cf1635f2fe4dd486371",
+      "sha256": "c2c83ea922e38fcf1dc81d9b532ef38145d4ef2b764c57f450d84d8fab7ad736",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_secret_rotated_periodically/secretsmanager_secret_rotated_periodically.metadata.json"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_secret_rotated_periodically/secretsmanager_secret_rotated_periodically.py",
+      "status": "downloaded-blob-verified",
+      "size": 2168,
+      "git_blob_sha": "400bbde7e35a570ef0d4af67e4f3ac5824170373",
+      "sha256": "34ca7e0fd49a66f49607294a1c511b77146c59ce2c0bbb66afe5e686430938dc",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_secret_rotated_periodically/secretsmanager_secret_rotated_periodically.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_secret_unused/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_secret_unused/__init__.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_secret_unused/secretsmanager_secret_unused.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 2275,
+      "git_blob_sha": "382b16838742647483b7f05b0afc79d73958e9e4",
+      "sha256": "66c7a28cc8f0d1b053c0d4c0581d24393344ecbae56a3b399cc3d63cfaafb574",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_secret_unused/secretsmanager_secret_unused.metadata.json"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_secret_unused/secretsmanager_secret_unused.py",
+      "status": "downloaded-blob-verified",
+      "size": 1461,
+      "git_blob_sha": "5ce89b949228521b100976b9e435502d46fb494f",
+      "sha256": "e09894757f90a6c3b8e063bbb9856cb48040b88932068d0534df31ac9024b884",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_secret_unused/secretsmanager_secret_unused.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/secretsmanager/secretsmanager_service.py",
+      "status": "downloaded-blob-verified",
+      "size": 3956,
+      "git_blob_sha": "695072c878c515742c4cfef37c4ddd536f12c053",
+      "sha256": "47a64fa7a852949704e801a71e72aa6495eecabed0e0248bb66656948b452441",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/secretsmanager/secretsmanager_service.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/__init__.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/ssm_client.py",
+      "status": "downloaded-blob-verified",
+      "size": 168,
+      "git_blob_sha": "2b950c76daecf90bf5e5a4b235cd235585ac60f0",
+      "sha256": "aa5a81729dedc9715a26815f6ccc7866fcbb9bdf8edd452587f84b879ae14340",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/ssm_client.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/ssm_document_secrets/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/ssm_document_secrets/__init__.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/ssm_document_secrets/ssm_document_secrets.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3504,
+      "git_blob_sha": "093b23338f0efe7755ffcc5248293a29dc1b1327",
+      "sha256": "f7b66df8ac57cf6276661963878290a08b89270c9b4156a172b41c6e5ed5469e",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/ssm_document_secrets/ssm_document_secrets.metadata.json"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/ssm_document_secrets/ssm_document_secrets.py",
+      "status": "downloaded-blob-verified",
+      "size": 2623,
+      "git_blob_sha": "1755c6f736791944e001c9094fff26700e0195ac",
+      "sha256": "ce1e95652ee2ecab135b4dc54334d978bd7cd27afed726affe5c5eac31cbf239",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/ssm_document_secrets/ssm_document_secrets.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/ssm_documents_set_as_public/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/ssm_documents_set_as_public/__init__.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/ssm_documents_set_as_public/ssm_documents_set_as_public.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 2441,
+      "git_blob_sha": "6ac42ea03c9e29fa53b17a186444d75d088fbbeb",
+      "sha256": "d257885a41871a0163d64e21be2e3640a925f6d73f0747ccd8d92f453920c561",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/ssm_documents_set_as_public/ssm_documents_set_as_public.metadata.json"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/ssm_documents_set_as_public/ssm_documents_set_as_public.py",
+      "status": "downloaded-blob-verified",
+      "size": 1671,
+      "git_blob_sha": "96dd85f0f3c0d41a80d57f2ba8aeef8693991236",
+      "sha256": "e8c979d9b5391a00d412e52a9cd0331918fc549cfe4d9bbdf0e0461f3896dffd",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/ssm_documents_set_as_public/ssm_documents_set_as_public.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/ssm_managed_compliant_patching/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/ssm_managed_compliant_patching/__init__.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/ssm_managed_compliant_patching/ssm_managed_compliant_patching.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3346,
+      "git_blob_sha": "42ed8968f16710d360cb487b489f95b24b4ae2b6",
+      "sha256": "5576e638d707e375128a667c1d36a7d38b3ad783cf01d37fbdc1f0d44d31640e",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/ssm_managed_compliant_patching/ssm_managed_compliant_patching.metadata.json"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/ssm_managed_compliant_patching/ssm_managed_compliant_patching.py",
+      "status": "downloaded-blob-verified",
+      "size": 1211,
+      "git_blob_sha": "95c83bd40ffd452e7c6b5dec97d3878333d1a952",
+      "sha256": "19179ec6043471f22f7fc89833af6efd3287d37369774e1f38219d872400bfff",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/ssm_managed_compliant_patching/ssm_managed_compliant_patching.py"
+    },
+    {
+      "path": "prowler/providers/aws/services/ssm/ssm_service.py",
+      "status": "downloaded-blob-verified",
+      "size": 8297,
+      "git_blob_sha": "689047551c4a61c6b1a32aed8b4bf6d34bdb09bd",
+      "sha256": "4692f91cabd08063f59fcf725bf6296c292502b7479e077f4cd5a8ac9705cba0",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/aws/services/ssm/ssm_service.py"
+    },
+    {
+      "path": "prowler/providers/azure/azure_provider.py",
+      "status": "downloaded-blob-verified",
+      "size": 61656,
+      "git_blob_sha": "bffc72396bf1d0f022d0bfe7acb051d3e1311f87",
+      "sha256": "8e54390485d31feeb5e114db2c24933f3c73a4f22f2532b5c18583f9520c9cbb",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/azure_provider.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/app/app_function_access_keys_configured/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/app/app_function_access_keys_configured/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/app/app_function_access_keys_configured/app_function_access_keys_configured.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 2561,
+      "git_blob_sha": "1c1237293667c9beca451a357ef434ae5a07545a",
+      "sha256": "81153fd5320193169d0734eda58e162b5d9baff863332f562397ad8417319fe5",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/app/app_function_access_keys_configured/app_function_access_keys_configured.metadata.json"
+    },
+    {
+      "path": "prowler/providers/azure/services/app/app_function_access_keys_configured/app_function_access_keys_configured.py",
+      "status": "downloaded-blob-verified",
+      "size": 1319,
+      "git_blob_sha": "45f273784d43264693649785cd1bb0b8051f9a01",
+      "sha256": "79036d1d23bc74de114be2ee96b5c0b47c77fb488afae356845820f4eb818c6e",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/app/app_function_access_keys_configured/app_function_access_keys_configured.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/app/app_service.py",
+      "status": "downloaded-blob-verified",
+      "size": 13252,
+      "git_blob_sha": "68c683caa106a1eb7ab38c5bb4df8fc1c9543c61",
+      "sha256": "2f366c4c9ebf07213b99629b50d10e31b318fe4bf99b005c3ae19af7fb4c07f1",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/app/app_service.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_access_only_through_private_endpoints/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_access_only_through_private_endpoints/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_access_only_through_private_endpoints/keyvault_access_only_through_private_endpoints.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3039,
+      "git_blob_sha": "9dfb9e8ad560ec44df87d490b1610319d447afad",
+      "sha256": "ba5540c5d84ff3d5173bbad8c912cc97cb1c3eeb31e9f26a24c55799145be2cd",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_access_only_through_private_endpoints/keyvault_access_only_through_private_endpoints.metadata.json"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_access_only_through_private_endpoints/keyvault_access_only_through_private_endpoints.py",
+      "status": "downloaded-blob-verified",
+      "size": 2060,
+      "git_blob_sha": "0eafd35de5ca1a5bc031211f5d87741b8fa5c5ee",
+      "sha256": "ca6b4086a167bbc59750f076a9be73b2a5e9c0469e9b4d84b8b6025620534f2a",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_access_only_through_private_endpoints/keyvault_access_only_through_private_endpoints.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_client.py",
+      "status": "downloaded-blob-verified",
+      "size": 195,
+      "git_blob_sha": "eef7690e98932931992a0189b7a564f8248a1d07",
+      "sha256": "546a175a94b2aed02f568fee859d8452cee84904033ea2f1ae2d1d7d246d8390",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_client.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_key_expiration_set_in_non_rbac/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_key_expiration_set_in_non_rbac/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_key_expiration_set_in_non_rbac/keyvault_key_expiration_set_in_non_rbac.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3138,
+      "git_blob_sha": "fbb45216fba93369ea73dcbd7fefd1cbfec7ae66",
+      "sha256": "0ecab20f92232c6417e32c127b20058170c05434fbb6aa4280a651a55bea7e2b",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_key_expiration_set_in_non_rbac/keyvault_key_expiration_set_in_non_rbac.metadata.json"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_key_expiration_set_in_non_rbac/keyvault_key_expiration_set_in_non_rbac.py",
+      "status": "downloaded-blob-verified",
+      "size": 1555,
+      "git_blob_sha": "fd4b4074ff4e24a6d86592e8e6cf33679c5470d3",
+      "sha256": "29300c27c15c616590bf8d371885017f77205ad7620c969dcf614bd830bca43f",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_key_expiration_set_in_non_rbac/keyvault_key_expiration_set_in_non_rbac.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_key_rotation_enabled/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_key_rotation_enabled/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_key_rotation_enabled/keyvault_key_rotation_enabled.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3153,
+      "git_blob_sha": "b42c6d82b7ec0d7e6612013315906b692e1295c0",
+      "sha256": "a9c082988bed19054a7b8c2fafc898f041d04c3f7ef75b7e98dd149ce162a3f1",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_key_rotation_enabled/keyvault_key_rotation_enabled.metadata.json"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_key_rotation_enabled/keyvault_key_rotation_enabled.py",
+      "status": "downloaded-blob-verified",
+      "size": 1596,
+      "git_blob_sha": "8a587a41ed17a4ec8d2fa2d1bdf8d15719aaa919",
+      "sha256": "c0142f03701bfb82c0350996b0dd78d5702b83d466326dabe5b5e7c9db004cee",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_key_rotation_enabled/keyvault_key_rotation_enabled.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_logging_enabled/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_logging_enabled/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_logging_enabled/keyvault_logging_enabled.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3577,
+      "git_blob_sha": "241c95ec7f774a6899906dd73cf82ed371e710fd",
+      "sha256": "9d7f96746495555cc80058a8947da4d20eff27961afcf9e61b696383ddc9982d",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_logging_enabled/keyvault_logging_enabled.metadata.json"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_logging_enabled/keyvault_logging_enabled.py",
+      "status": "downloaded-blob-verified",
+      "size": 1922,
+      "git_blob_sha": "ea80b920c519820f9488bee7ab451c404cd943bc",
+      "sha256": "5becb572ac237fb4520852113d8115b3e5d4b42a130587ff020b75edf866370c",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_logging_enabled/keyvault_logging_enabled.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_non_rbac_secret_expiration_set/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_non_rbac_secret_expiration_set/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_non_rbac_secret_expiration_set/keyvault_non_rbac_secret_expiration_set.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 2850,
+      "git_blob_sha": "38ca08f08d82c42735f25e64a1b9803a7673fdf2",
+      "sha256": "131bb587ce6d966877a291ba273803773e0173fe7ac119ed95d273d0a5b75418",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_non_rbac_secret_expiration_set/keyvault_non_rbac_secret_expiration_set.metadata.json"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_non_rbac_secret_expiration_set/keyvault_non_rbac_secret_expiration_set.py",
+      "status": "downloaded-blob-verified",
+      "size": 1582,
+      "git_blob_sha": "a0d83eeae65c56cdebc9f76cb0684d88cf69b64a",
+      "sha256": "a6e6ad24e80779fbf4462208730f0a81c9055f7c002a55a4503212b5377dc587",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_non_rbac_secret_expiration_set/keyvault_non_rbac_secret_expiration_set.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_private_endpoints/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_private_endpoints/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_private_endpoints/keyvault_private_endpoints.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 4124,
+      "git_blob_sha": "6b52e3536198f811216ef532acc4c79abd18e697",
+      "sha256": "c7f75838f60c3282b5625d33e08089743f258ff9da4895a5b850d880682a7518",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_private_endpoints/keyvault_private_endpoints.metadata.json"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_private_endpoints/keyvault_private_endpoints.py",
+      "status": "downloaded-blob-verified",
+      "size": 1250,
+      "git_blob_sha": "9af1b8ba2da7e681b00a1a76a2384c2e0d5d553a",
+      "sha256": "e10cbf81a402d8651697a96812eea51428def362c83509083850d605c163bb1b",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_private_endpoints/keyvault_private_endpoints.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_rbac_enabled/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_rbac_enabled/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_rbac_enabled/keyvault_rbac_enabled.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3282,
+      "git_blob_sha": "d2b23d59c08a04f2062f492fd845137862957190",
+      "sha256": "3bc30e9d212d368f0b510518b6b2176c6b5e8061af2157eafd58cefec5e2097f",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_rbac_enabled/keyvault_rbac_enabled.metadata.json"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_rbac_enabled/keyvault_rbac_enabled.py",
+      "status": "downloaded-blob-verified",
+      "size": 1254,
+      "git_blob_sha": "1025cf511832eea248d25ca148facf2ae17ba7fe",
+      "sha256": "9bee47d2e93e57166a51594421624359387f2f07ed2e2564588594d0a3ac0b80",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_rbac_enabled/keyvault_rbac_enabled.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_rbac_key_expiration_set/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_rbac_key_expiration_set/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_rbac_key_expiration_set/keyvault_rbac_key_expiration_set.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3181,
+      "git_blob_sha": "8b6c1d336ff82f5ebc3112c0b704933ef1444544",
+      "sha256": "32f69765a7acd8bd592f1c99fa96a768e484d7ee5c6608518fa607dfae456494",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_rbac_key_expiration_set/keyvault_rbac_key_expiration_set.metadata.json"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_rbac_key_expiration_set/keyvault_rbac_key_expiration_set.py",
+      "status": "downloaded-blob-verified",
+      "size": 1544,
+      "git_blob_sha": "edc3416343a18ce98b4bc7cd26ef1a7c56cd64cd",
+      "sha256": "cc38126cc57d38b5168aa7e142615099b53d32cad8ff896a9154d8aa59fdcd58",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_rbac_key_expiration_set/keyvault_rbac_key_expiration_set.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_rbac_secret_expiration_set/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_rbac_secret_expiration_set/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_rbac_secret_expiration_set/keyvault_rbac_secret_expiration_set.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 2798,
+      "git_blob_sha": "2cab692a987a9f0e3c17c12a298a5b44ab2a59d6",
+      "sha256": "e74a0a990e807f932e9134f53cb3d1e997c6688a8e5ac5445e72adfa97ff4e1a",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_rbac_secret_expiration_set/keyvault_rbac_secret_expiration_set.metadata.json"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_rbac_secret_expiration_set/keyvault_rbac_secret_expiration_set.py",
+      "status": "downloaded-blob-verified",
+      "size": 1574,
+      "git_blob_sha": "ed9ee564b4eb093cd1eb2833d1c13379ea5c9b7f",
+      "sha256": "ba8a85a9422639f3ecfc4214389301f18dc128afa6f7ca2082d7b04c77227f78",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_rbac_secret_expiration_set/keyvault_rbac_secret_expiration_set.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_recoverable/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_recoverable/__init__.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_recoverable/keyvault_recoverable.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 3109,
+      "git_blob_sha": "1f34db1e7fb1978fb18b337920e07698c2f659f6",
+      "sha256": "3b1d17f58506640032fe3b46343f24e9f70d39133e2581f502b6a13dd3786659",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_recoverable/keyvault_recoverable.metadata.json"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_recoverable/keyvault_recoverable.py",
+      "status": "downloaded-blob-verified",
+      "size": 1234,
+      "git_blob_sha": "ee3da354960942f1974b8d0c3c1c8660c175956b",
+      "sha256": "b5375473ca06b9df5363691066c5ad28164d0b24a232a10f2dd00377326fab6e",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_recoverable/keyvault_recoverable.py"
+    },
+    {
+      "path": "prowler/providers/azure/services/keyvault/keyvault_service.py",
+      "status": "downloaded-blob-verified",
+      "size": 13760,
+      "git_blob_sha": "5e79412f4ba093ba10ffa239f98393968cab6fd8",
+      "sha256": "442d0b552e0b765bfcfaf4e2f06ee57a4f685bc00ac1dd38d1da84b81b9a4875",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/azure/services/keyvault/keyvault_service.py"
+    },
+    {
+      "path": "prowler/providers/common/provider.py",
+      "status": "downloaded-blob-verified",
+      "size": 41928,
+      "git_blob_sha": "7e23b8de7f584c3978467b92cecd8dd15ebe8e96",
+      "sha256": "1080b11456deb6426307167067a3066ec79c87c7af07bb85dd3c507d6c76a1da",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/common/provider.py"
+    },
+    {
+      "path": "prowler/providers/gcp/gcp_provider.py",
+      "status": "downloaded-blob-verified",
+      "size": 42908,
+      "git_blob_sha": "69ab9404ef1be12d53bf02a689702ebea9b34f8b",
+      "sha256": "9ae2691559660ca902ab3b282fb1a5611bb47ca11f3118d34500dac847770c77",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/gcp/gcp_provider.py"
+    },
+    {
+      "path": "prowler/providers/gcp/services/secretmanager/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/gcp/services/secretmanager/__init__.py"
+    },
+    {
+      "path": "prowler/providers/gcp/services/secretmanager/secretmanager_client.py",
+      "status": "downloaded-blob-verified",
+      "size": 227,
+      "git_blob_sha": "dc18866cb3ab4bb993e1ed4efa34e6042cf6889d",
+      "sha256": "e843c51bdd499c0f98156f379ff34b7d8e43a8947ca70f873f657334c57b0e57",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/gcp/services/secretmanager/secretmanager_client.py"
+    },
+    {
+      "path": "prowler/providers/gcp/services/secretmanager/secretmanager_secret_not_publicly_accessible/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/gcp/services/secretmanager/secretmanager_secret_not_publicly_accessible/__init__.py"
+    },
+    {
+      "path": "prowler/providers/gcp/services/secretmanager/secretmanager_secret_not_publicly_accessible/secretmanager_secret_not_publicly_accessible.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 2758,
+      "git_blob_sha": "9f1f4d33813981c6014cb558fbf72248d4797006",
+      "sha256": "255ba00dab73d464fbe3814d67c1d4d3db1df2f532353f36416d87048c0f2d66",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/gcp/services/secretmanager/secretmanager_secret_not_publicly_accessible/secretmanager_secret_not_publicly_accessible.metadata.json"
+    },
+    {
+      "path": "prowler/providers/gcp/services/secretmanager/secretmanager_secret_not_publicly_accessible/secretmanager_secret_not_publicly_accessible.py",
+      "status": "downloaded-blob-verified",
+      "size": 1582,
+      "git_blob_sha": "fb52a119fa11b2e05e11aec824c10088bdf78c13",
+      "sha256": "c688da24636dbb14fa679832411913b18e3fc9817be95ddebfe6589857e4dd8a",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/gcp/services/secretmanager/secretmanager_secret_not_publicly_accessible/secretmanager_secret_not_publicly_accessible.py"
+    },
+    {
+      "path": "prowler/providers/gcp/services/secretmanager/secretmanager_secret_rotation_enabled/__init__.py",
+      "status": "downloaded-blob-verified",
+      "size": 0,
+      "git_blob_sha": "e69de29bb2d1d6434b8b29ae775ad8c2e48c5391",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/gcp/services/secretmanager/secretmanager_secret_rotation_enabled/__init__.py"
+    },
+    {
+      "path": "prowler/providers/gcp/services/secretmanager/secretmanager_secret_rotation_enabled/secretmanager_secret_rotation_enabled.metadata.json",
+      "status": "downloaded-blob-verified",
+      "size": 2769,
+      "git_blob_sha": "09dd158b49927a2af5c47010e2fccd134e487dfc",
+      "sha256": "ffc808b779c8635a7d66434f773adea8edccf5a888c29fd74789c4cb69766e20",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/gcp/services/secretmanager/secretmanager_secret_rotation_enabled/secretmanager_secret_rotation_enabled.metadata.json"
+    },
+    {
+      "path": "prowler/providers/gcp/services/secretmanager/secretmanager_secret_rotation_enabled/secretmanager_secret_rotation_enabled.py",
+      "status": "downloaded-blob-verified",
+      "size": 3331,
+      "git_blob_sha": "84d53e7f3a61cae6a54a3fe0a1196e9f33359e1b",
+      "sha256": "947fffe1aa779087b2a76f4225adbdfadc7c991e04a509e1d05a6f05409ffb58",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/gcp/services/secretmanager/secretmanager_secret_rotation_enabled/secretmanager_secret_rotation_enabled.py"
+    },
+    {
+      "path": "prowler/providers/gcp/services/secretmanager/secretmanager_service.py",
+      "status": "downloaded-blob-verified",
+      "size": 3767,
+      "git_blob_sha": "ca016630837561dd838cdd3ab8c65593a583875f",
+      "sha256": "a2f5f8e45aa8eaf4977b9176ba531f9b549072035d8d29b8ff7041eec2b9618a",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/providers/gcp/services/secretmanager/secretmanager_service.py"
+    },
+    {
+      "path": "pyproject.toml",
+      "status": "downloaded-blob-verified",
+      "size": 12102,
+      "git_blob_sha": "ac90a11d607e140c817b000511de9d4013188945",
+      "sha256": "32f9d64fcd5090c6fef3c06197623512212e8b7ee434064c4b6f019505112c09",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/pyproject.toml"
+    },
+    {
+      "path": "tests/providers/aws/services/secretsmanager/secretsmanager_automatic_rotation_enabled/secretsmanager_automatic_rotation_enabled_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 4712,
+      "git_blob_sha": "e953ca1d9dd00de062bd4af4e88a27ef6c20124c",
+      "sha256": "c60cca7ceeecd04fdc3b4fe5dfbc8e318260be34a164f4fb95ecf0cb0e753483",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/aws/services/secretsmanager/secretsmanager_automatic_rotation_enabled/secretsmanager_automatic_rotation_enabled_test.py"
+    },
+    {
+      "path": "tests/providers/aws/services/secretsmanager/secretsmanager_has_restrictive_resource_policy/secretsmanager_has_restrictive_resource_policy_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 107377,
+      "git_blob_sha": "cdf45e446e3670a40fd9a789ca810448047d81c4",
+      "sha256": "dece44bb35f1f75397dddb258d1ce6845298d897d144412946a9051c311c30a7",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/aws/services/secretsmanager/secretsmanager_has_restrictive_resource_policy/secretsmanager_has_restrictive_resource_policy_test.py"
+    },
+    {
+      "path": "tests/providers/aws/services/secretsmanager/secretsmanager_not_publicly_accessible/secretsmanager_not_publicly_accessible_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 5024,
+      "git_blob_sha": "88ecb8ab18f65de5a9106bcf19925aad8e6ff43c",
+      "sha256": "fdb58e055dca1c698ba8d86f965424f7e722825299e10dbafe553ded1394a50e",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/aws/services/secretsmanager/secretsmanager_not_publicly_accessible/secretsmanager_not_publicly_accessible_test.py"
+    },
+    {
+      "path": "tests/providers/aws/services/secretsmanager/secretsmanager_secret_rotated_periodically/secretsmanager_secret_rotated_periodically_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 8533,
+      "git_blob_sha": "8dcf4b436f37f1478bd4af801ea61f01f0fcf945",
+      "sha256": "2d87358a2a96ca4d262f056196f8aed5cac9a84f9a52b4594df819f13900fff5",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/aws/services/secretsmanager/secretsmanager_secret_rotated_periodically/secretsmanager_secret_rotated_periodically_test.py"
+    },
+    {
+      "path": "tests/providers/aws/services/secretsmanager/secretsmanager_secret_unused/secretsmanager_secret_unused_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 8285,
+      "git_blob_sha": "a92082d5c52146c61d26f80fc6d6b50996a0e07c",
+      "sha256": "39145ac80751a676f2c74b61a5aca4f79b5d1443fefe6f47116cf4414600133b",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/aws/services/secretsmanager/secretsmanager_secret_unused/secretsmanager_secret_unused_test.py"
+    },
+    {
+      "path": "tests/providers/aws/services/secretsmanager/secretsmanager_service_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 6673,
+      "git_blob_sha": "996a9f7da4e2fd106b61ea4ee3e099a93c135c58",
+      "sha256": "379fcd827a2ba7c92ec5201d34ed9772562958fcede8ecbfee8eefde38a188b7",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/aws/services/secretsmanager/secretsmanager_service_test.py"
+    },
+    {
+      "path": "tests/providers/aws/services/ssm/ssm_document_secrets/ssm_document_secrets_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 3570,
+      "git_blob_sha": "9fc6de4762a36e3d0c9a75dcdfb694dbdd115389",
+      "sha256": "4fa712c65be5c67c4d3d445cd5ed7f6c21eaa3a0cd3b633a5ba2154ad5b380a7",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/aws/services/ssm/ssm_document_secrets/ssm_document_secrets_test.py"
+    },
+    {
+      "path": "tests/providers/aws/services/ssm/ssm_documents_set_as_public/ssm_documents_set_as_public_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 7981,
+      "git_blob_sha": "9c218bb241253587917310b503f2f6c941dc94aa",
+      "sha256": "6156f757e9e1e8ea02757e6d8538e545198236c164586f4e1591fd5f7f231f18",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/aws/services/ssm/ssm_documents_set_as_public/ssm_documents_set_as_public_test.py"
+    },
+    {
+      "path": "tests/providers/aws/services/ssm/ssm_managed_compliant_patching/ssm_managed_compliant_patching_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 6695,
+      "git_blob_sha": "af55449e881f19646958b1180110e244660df7f4",
+      "sha256": "f88af5f28ad335a117bbe5655f6d349e671722357d639aacb97702984b6da32d",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/aws/services/ssm/ssm_managed_compliant_patching/ssm_managed_compliant_patching_test.py"
+    },
+    {
+      "path": "tests/providers/aws/services/ssm/ssm_service_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 6790,
+      "git_blob_sha": "14370693fd16a9cfdc17582c4352575138d4c4fa",
+      "sha256": "231dd1a1d72b2fbc17fac066acec04a0f6baaa33828bfbbc36cc5355014e3ade",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/aws/services/ssm/ssm_service_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/app/app_function_access_keys_configured/app_function_access_keys_configured_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 6740,
+      "git_blob_sha": "803ba7bd75bc0709d59d62ebe2b9a9be02d7d2e4",
+      "sha256": "f218e25300865b4441560faf0cc53545d08fd2b534d9a1ef641c7ee64bb7a80b",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/app/app_function_access_keys_configured/app_function_access_keys_configured_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/keyvault/keyvault_access_only_through_private_endpoints/keyvault_access_only_through_private_endpoints_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 8824,
+      "git_blob_sha": "4244684d1a6dc9c7fc19e92c887f926d84ed1aa0",
+      "sha256": "662b3c668bd9656af04706bbaa934a5951e9c738edab405bd79cd7e33804dc1e",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/keyvault/keyvault_access_only_through_private_endpoints/keyvault_access_only_through_private_endpoints_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/keyvault/keyvault_key_expiration_set_in_non_rbac/keyvault_key_expiration_set_in_non_rbac_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 13341,
+      "git_blob_sha": "9da66f9eda08bd635733382dc52b57c5cbc77b46",
+      "sha256": "d3295ae7330b5590c70194d2e565e13eff633fb24f3764a989843cab4f283daa",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/keyvault/keyvault_key_expiration_set_in_non_rbac/keyvault_key_expiration_set_in_non_rbac_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/keyvault/keyvault_key_rotation_enabled/keyvault_key_rotation_enabled_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 16795,
+      "git_blob_sha": "fd6e2495ce61e704adde470f2d11037f84e2447f",
+      "sha256": "d176ae0ee78f06908c7bb6b6f36df1b50518a673b4c3bd75cbade1a3185f9c58",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/keyvault/keyvault_key_rotation_enabled/keyvault_key_rotation_enabled_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/keyvault/keyvault_logging_enabled/keyvault_logging_enabled_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 25846,
+      "git_blob_sha": "6050263af36ae2b35473467a86236cd283e4683c",
+      "sha256": "1149deaab98c3bdcc1fe1e1ba62bab24411ccaf0d85b921b3dd0fe36fdc356be",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/keyvault/keyvault_logging_enabled/keyvault_logging_enabled_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/keyvault/keyvault_non_rbac_secret_expiration_set/keyvault_non_rbac_secret_expiration_set_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 13115,
+      "git_blob_sha": "eb6036f9c7aadaacfce128ea523e97f3c4f9fb21",
+      "sha256": "0a2535a0e8c29c22c83ac1b79941a9f1cf4e5714c9a6b3995557762fc950de00",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/keyvault/keyvault_non_rbac_secret_expiration_set/keyvault_non_rbac_secret_expiration_set_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/keyvault/keyvault_private_endpoints/keyvault_private_endpoints_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 6097,
+      "git_blob_sha": "783ba6c3190814cbdef10b3ff65b4d518777cd10",
+      "sha256": "826919760d48bdc702e9b6ffad98b8abe6ed9c41a982c6f80d82a190da1f4ab2",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/keyvault/keyvault_private_endpoints/keyvault_private_endpoints_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/keyvault/keyvault_rbac_enabled/keyvault_rbac_enabled_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 5628,
+      "git_blob_sha": "be72938b0e9419f2ac368951d36842523841fdac",
+      "sha256": "38827f726b57a141ec4f2ff8d6edd76f40d4df252aa78bf70124c6b89f6d3080",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/keyvault/keyvault_rbac_enabled/keyvault_rbac_enabled_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/keyvault/keyvault_rbac_key_expiration_set/keyvault_rbac_key_expiration_set_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 13063,
+      "git_blob_sha": "b73948adef7c249bf32261d42704fbe2021f3004",
+      "sha256": "516729c732d18e0a4f831cb5c5534954eff7a2cfa9ef7569653f1ca5e66ef02d",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/keyvault/keyvault_rbac_key_expiration_set/keyvault_rbac_key_expiration_set_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/keyvault/keyvault_rbac_secret_expiration_set/keyvault_rbac_secret_expiration_set_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 12947,
+      "git_blob_sha": "dffcca1f7a8e1064b993f54eadeef055dae91546",
+      "sha256": "ed6c775a5a13eec1c38beae3a63fdbfb3a0ba32bcbe0c7d53822e5e19a8eb5f0",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/keyvault/keyvault_rbac_secret_expiration_set/keyvault_rbac_secret_expiration_set_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/keyvault/keyvault_recoverable/keyvault_recoverable_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 8919,
+      "git_blob_sha": "f0a0592e02865442c5c49db5edc5f97e390dcfe0",
+      "sha256": "1a2ff11152ced9fcd462199703e5ca079e421a97412d1bc652eabdc7337326bc",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/keyvault/keyvault_recoverable/keyvault_recoverable_test.py"
+    },
+    {
+      "path": "tests/providers/azure/services/keyvault/keyvault_service_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 20365,
+      "git_blob_sha": "d52d292af38ae9fe9f059b77ff4f73f63037ed41",
+      "sha256": "1f2bd405731000e5fd94af838a3dd566b8d828c8e1f5c2caa103d8392e86f1d7",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/azure/services/keyvault/keyvault_service_test.py"
+    },
+    {
+      "path": "tests/providers/gcp/services/secretmanager/secretmanager_secret_not_publicly_accessible/secretmanager_secret_not_publicly_accessible_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 6249,
+      "git_blob_sha": "f925966f3cfdca8b562d1c13df80aec49190b237",
+      "sha256": "aaec3eb413e61ba956c945546b1290104abf1f5dec0f76d4b8ef6ffe04cfcb98",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/gcp/services/secretmanager/secretmanager_secret_not_publicly_accessible/secretmanager_secret_not_publicly_accessible_test.py"
+    },
+    {
+      "path": "tests/providers/gcp/services/secretmanager/secretmanager_secret_rotation_enabled/secretmanager_secret_rotation_enabled_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 14786,
+      "git_blob_sha": "497dd7428b6619787d476679283ad4171cbb3c51",
+      "sha256": "6c84716ba485ca4cee8dce41e48128a0e72f8f79aef18d7440040a1ca9af8c0f",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/gcp/services/secretmanager/secretmanager_secret_rotation_enabled/secretmanager_secret_rotation_enabled_test.py"
+    },
+    {
+      "path": "tests/providers/gcp/services/secretmanager/secretmanager_service_test.py",
+      "status": "downloaded-blob-verified",
+      "size": 8098,
+      "git_blob_sha": "f393b10a598b40cb5f9092740e0678244e8d55ec",
+      "sha256": "754be8a6400ba98ecfb0dec4be27b04c4e76b7768496292273e5be8ef7241607",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/tests/providers/gcp/services/secretmanager/secretmanager_service_test.py"
+    },
+    {
+      "path": "docs/user-guide/providers/aws/authentication.mdx",
+      "status": "downloaded-blob-verified",
+      "size": 8551,
+      "git_blob_sha": "35c37548ea0643c8d039d12a43678e9df0dcc05a",
+      "sha256": "32442f9554dcaf98c1d1b8a12b71d5fa9436cf31ec7dec5f035e1826a145949a",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/docs/user-guide/providers/aws/authentication.mdx"
+    },
+    {
+      "path": "docs/user-guide/providers/azure/authentication.mdx",
+      "status": "downloaded-blob-verified",
+      "size": 19476,
+      "git_blob_sha": "b259a8b2ebae7115389dba032c6c9229d0e5845a",
+      "sha256": "e374022b08155238f57b4c529fee2f6c0279a24517f1bde27967114f28683660",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/docs/user-guide/providers/azure/authentication.mdx"
+    },
+    {
+      "path": "docs/user-guide/providers/gcp/authentication.mdx",
+      "status": "downloaded-blob-verified",
+      "size": 7242,
+      "git_blob_sha": "ce01c1ba23771ffbd456d3c97e646c6cf79cd865",
+      "sha256": "a426a687072fa6794eb05f428c9f98577e5e3ff2098ddb801bc6b677c977b26c",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/docs/user-guide/providers/gcp/authentication.mdx"
+    },
+    {
+      "path": "prowler/lib/cli/parser.py",
+      "status": "downloaded-blob-verified",
+      "size": 20117,
+      "git_blob_sha": "68c08e8f6b5fb049df26aa43fb60d2951691bded",
+      "sha256": "69d7664fa8c636eaed9e8dceeda25bd5a2a67d1a7e7a0ec13b30228fcbe7270d",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/lib/cli/parser.py"
+    },
+    {
+      "path": "prowler/lib/check/check.py",
+      "status": "downloaded-blob-verified",
+      "size": 36011,
+      "git_blob_sha": "283d8d2e8b998483c0864410f0728c90fe8d9627",
+      "sha256": "657a1dc3841522bd3d68fd413f1a2462b9ec093c74c92b92b0de84f4740b0ace",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/lib/check/check.py"
+    },
+    {
+      "path": "prowler/lib/check/models.py",
+      "status": "downloaded-blob-verified",
+      "size": 53015,
+      "git_blob_sha": "bd346ad8b32a480b98c95d545cdc11c2149f0638",
+      "sha256": "422db283f9b16025c584593bb74c9bef2cc6c3570385ec15334184f2985c2e9d",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/lib/check/models.py"
+    },
+    {
+      "path": "prowler/lib/outputs/finding.py",
+      "status": "downloaded-blob-verified",
+      "size": 37832,
+      "git_blob_sha": "dc880446929d4188dab86f851b0ea3d3853e7ca4",
+      "sha256": "00ed79bee5e32239d3cce4943c70df33dbfe3f85056deb750ad11f2073613cce",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/lib/outputs/finding.py"
+    },
+    {
+      "path": "prowler/lib/outputs/ocsf/ingestion.py",
+      "status": "downloaded-blob-verified",
+      "size": 6833,
+      "git_blob_sha": "ac095f7ec90410fdafc3f1e0423746cef7d0f736",
+      "sha256": "676d1e38c9b114ab7b0c02678ddabcc3460289e704388f6350ea07127dd572a4",
+      "url": "https://raw.githubusercontent.com/prowler-cloud/prowler/5.44.0/prowler/lib/outputs/ocsf/ingestion.py"
+    }
+  ]
+}

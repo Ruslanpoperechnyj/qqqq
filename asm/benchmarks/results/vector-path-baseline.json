@@ -1,0 +1,598 @@
+{
+  "generated_at": "2026-10-05T18:25:44+00:00",
+  "python": "3.13.14",
+  "sqlite": "3.46.1",
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "database": "fresh SQLite file in a per-size subprocess TemporaryDirectory",
+  "isolation": "ASM_DB overridden before importing asm; inherited database is not opened",
+  "network_scanner_model": "none; deterministic embed and fallback SQLite vector table only",
+  "method": "one warm-up plus timed calls; p50 median; p95 nearest-rank; ordered result signatures checked for repeatability; resource peak RSS measured over the combined search_all then notes_for_scan sequence",
+  "repeat": 3,
+  "embedding_dimension": 16,
+  "dimension_caveat": "Synthetic compact dimension chosen to safely run 100k findings within the sandbox; memory is not representative of 384D vectors.",
+  "cases": [
+    {
+      "findings": 1000,
+      "scans": 100,
+      "targets": 100,
+      "findings_per_scan_approx": 10,
+      "embedding_dimension": 16,
+      "database_bytes": 733184,
+      "search_all": {
+        "warmup": 1,
+        "runs": 3,
+        "p50_ms": 40.797,
+        "p95_ms_nearest_rank": 41.075,
+        "results_stable_across_runs": true,
+        "per_measured_call_counts": {
+          "all_findings_calls": 1,
+          "all_findings_rows": 1000,
+          "vectors_cached_calls": 1,
+          "vectors_cached_candidate_ids": 1000,
+          "read_stored_calls": 2,
+          "read_stored_vector_rows": 2000
+        },
+        "ordered_result_signature": [
+          {
+            "finding_id": 1,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 3,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 5,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 7,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 9,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 11,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 2"
+          },
+          {
+            "finding_id": 13,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 2"
+          },
+          {
+            "finding_id": 15,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 2"
+          },
+          {
+            "finding_id": 17,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 2"
+          },
+          {
+            "finding_id": 19,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 2"
+          },
+          {
+            "finding_id": 21,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 3"
+          },
+          {
+            "finding_id": 23,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 3"
+          }
+        ]
+      },
+      "notes_for_scan": {
+        "warmup": 1,
+        "runs": 3,
+        "p50_ms": 525.009,
+        "p95_ms_nearest_rank": 563.352,
+        "results_stable_across_runs": true,
+        "per_measured_call_counts": {
+          "all_findings_calls": 4,
+          "all_findings_rows": 4000,
+          "vectors_cached_calls": 4,
+          "vectors_cached_candidate_ids": 3960,
+          "read_stored_calls": 8,
+          "read_stored_vector_rows": 8000
+        },
+        "ordered_result_signature": [
+          {
+            "finding_id": 1,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 11",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "false"
+              },
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 13",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          },
+          {
+            "finding_id": 2,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 12",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "fixed"
+              },
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 14",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          },
+          {
+            "finding_id": 3,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 11",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "false"
+              },
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 13",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          },
+          {
+            "finding_id": 4,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 12",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "fixed"
+              },
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 14",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          }
+        ]
+      },
+      "peak_rss_before_mib": 22.37,
+      "peak_rss_after_mib": 27.57,
+      "peak_rss_delta_mib": 5.2,
+      "temporary_database_removed": true
+    },
+    {
+      "findings": 10000,
+      "scans": 100,
+      "targets": 100,
+      "findings_per_scan_approx": 100,
+      "embedding_dimension": 16,
+      "database_bytes": 5152768,
+      "search_all": {
+        "warmup": 1,
+        "runs": 3,
+        "p50_ms": 416.246,
+        "p95_ms_nearest_rank": 425.372,
+        "results_stable_across_runs": true,
+        "per_measured_call_counts": {
+          "all_findings_calls": 1,
+          "all_findings_rows": 10000,
+          "vectors_cached_calls": 1,
+          "vectors_cached_candidate_ids": 10000,
+          "read_stored_calls": 2,
+          "read_stored_vector_rows": 20000
+        },
+        "ordered_result_signature": [
+          {
+            "finding_id": 1,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 3,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 5,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 7,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 9,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 11,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 13,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 15,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 17,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 19,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 21,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 23,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          }
+        ]
+      },
+      "notes_for_scan": {
+        "warmup": 1,
+        "runs": 3,
+        "p50_ms": 4632.314,
+        "p95_ms_nearest_rank": 4842.147,
+        "results_stable_across_runs": true,
+        "per_measured_call_counts": {
+          "all_findings_calls": 4,
+          "all_findings_rows": 40000,
+          "vectors_cached_calls": 4,
+          "vectors_cached_candidate_ids": 39600,
+          "read_stored_calls": 8,
+          "read_stored_vector_rows": 80000
+        },
+        "ordered_result_signature": [
+          {
+            "finding_id": 1,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 101",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "false"
+              },
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 103",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          },
+          {
+            "finding_id": 2,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 102",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "fixed"
+              },
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 104",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          },
+          {
+            "finding_id": 3,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 101",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "false"
+              },
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 103",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          },
+          {
+            "finding_id": 4,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 102",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "fixed"
+              },
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 104",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          }
+        ]
+      },
+      "peak_rss_before_mib": 23.66,
+      "peak_rss_after_mib": 70.17,
+      "peak_rss_delta_mib": 46.5,
+      "temporary_database_removed": true
+    },
+    {
+      "findings": 100000,
+      "scans": 100,
+      "targets": 100,
+      "findings_per_scan_approx": 1000,
+      "embedding_dimension": 16,
+      "database_bytes": 50163712,
+      "search_all": {
+        "warmup": 1,
+        "runs": 3,
+        "p50_ms": 4335.874,
+        "p95_ms_nearest_rank": 4796.243,
+        "results_stable_across_runs": true,
+        "per_measured_call_counts": {
+          "all_findings_calls": 1,
+          "all_findings_rows": 100000,
+          "vectors_cached_calls": 1,
+          "vectors_cached_candidate_ids": 100000,
+          "read_stored_calls": 2,
+          "read_stored_vector_rows": 200000
+        },
+        "ordered_result_signature": [
+          {
+            "finding_id": 1,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 3,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 5,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 7,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 9,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 11,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 13,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 15,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 17,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 19,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 21,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          },
+          {
+            "finding_id": 23,
+            "score": 2.25,
+            "words": 2,
+            "client": "Synthetic client 1"
+          }
+        ]
+      },
+      "notes_for_scan": {
+        "warmup": 1,
+        "runs": 3,
+        "p50_ms": 48347.058,
+        "p95_ms_nearest_rank": 48467.306,
+        "results_stable_across_runs": true,
+        "per_measured_call_counts": {
+          "all_findings_calls": 4,
+          "all_findings_rows": 400000,
+          "vectors_cached_calls": 4,
+          "vectors_cached_candidate_ids": 396000,
+          "read_stored_calls": 8,
+          "read_stored_vector_rows": 800000
+        },
+        "ordered_result_signature": [
+          {
+            "finding_id": 1,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 1001",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "false"
+              },
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 1003",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          },
+          {
+            "finding_id": 2,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 1002",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "fixed"
+              },
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 1004",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          },
+          {
+            "finding_id": 3,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 1001",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "false"
+              },
+              {
+                "scan_id": 2,
+                "title": "Open directory on synthetic asset 1003",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          },
+          {
+            "finding_id": 4,
+            "hits": [
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 1002",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "fixed"
+              },
+              {
+                "scan_id": 2,
+                "title": "Outdated TLS on synthetic asset 1004",
+                "score": 12.25,
+                "client": "Synthetic client 2",
+                "status": "open"
+              }
+            ]
+          }
+        ]
+      },
+      "peak_rss_before_mib": 23.62,
+      "peak_rss_after_mib": 510.28,
+      "peak_rss_delta_mib": 486.66,
+      "temporary_database_removed": true
+    }
+  ],
+  "peak_rss_scope": "per-size process delta after both paths; not attributed to one function individually"
+}

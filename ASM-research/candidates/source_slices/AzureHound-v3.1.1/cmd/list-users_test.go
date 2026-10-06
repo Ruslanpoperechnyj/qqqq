@@ -1,0 +1,116 @@
+// Copyright (C) 2022 Specter Ops, Inc.
+//
+// This file is part of AzureHound.
+//
+// AzureHound is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// AzureHound is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+package cmd
+
+import (
+	"context"
+	"fmt"
+	"testing"
+
+	"github.com/SpecterOps/AzureHound/v2/client"
+	"github.com/SpecterOps/AzureHound/v2/client/mocks"
+	"github.com/SpecterOps/AzureHound/v2/models/azure"
+	"go.uber.org/mock/gomock"
+)
+
+func init() {
+	setupLogger()
+}
+
+func TestListUsers(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	ctx := context.Background()
+
+	mockClient := mocks.NewMockAzureClient(ctrl)
+	mockChannel := make(chan client.AzureResult[azure.User])
+	mockTenant := azure.Tenant{}
+	mockError := fmt.Errorf("I'm an error")
+	mockClient.EXPECT().TenantInfo().Return(mockTenant).AnyTimes()
+	mockClient.EXPECT().ListAzureADUsers(gomock.Any(), gomock.Any()).Return(mockChannel)
+
+	go func() {
+		defer close(mockChannel)
+		mockChannel <- client.AzureResult[azure.User]{
+			Ok: azure.User{},
+		}
+		mockChannel <- client.AzureResult[azure.User]{
+			Error: mockError,
+		}
+		mockChannel <- client.AzureResult[azure.User]{
+			Ok: azure.User{},
+		}
+	}()
+
+	channel := listUsers(ctx, mockClient)
+	result := <-channel
+	if _, ok := result.(AzureWrapper); !ok {
+		t.Errorf("failed type assertion: got %T, want %T", result, AzureWrapper{})
+	}
+
+	if _, ok := <-channel; ok {
+		t.Error("expected channel to close from an error result but it did not")
+	}
+}
+
+func TestIsGraphAuthorizationDenied(t *testing.T) {
+	tests := []struct {
+		name     string
+		err      error
+		expected bool
+	}{
+		{
+			name:     "standard Authentication_MSGraphPermissionMissing error",
+			err:      fmt.Errorf("map[error:map[code:Authentication_MSGraphPermissionMissing innerError:map[client-request-id:fac52490-ea06-48f1-941e-5f5bba8e35fc date:2026-01-28T15:29:16 request-id:fac52490-ea06-48f1-941e-5f5bba8e35fc] message:The principal does not have required Microsoft Graph permission(s): AuditLog.Read.All to call this API. For more information about Microsoft Graph permissions, please visit https://learn.microsoft.com/graph/permissions-overview.]]"),
+			expected: true,
+		},
+		{
+			// FOCI / Office client_id returns UnknownError instead of Authentication_MSGraphPermissionMissing
+			// when signInActivity is requested without AuditLog.Read.All application permission.
+			name:     "Office client delegated permission UnknownError",
+			err:      fmt.Errorf("map[error:map[code:UnknownError message:Microsoft Office does not have authorization to call this API.]]"),
+			expected: true,
+		},
+		{
+			// Returned when the principal's role does not support reading signInActivity.
+			name:     "unsupported user role error",
+			err:      fmt.Errorf("map[error:map[code:Authentication_RequestFromUnsupportedUserRole message:The request is not supported for the current user role.]]"),
+			expected: true,
+		},
+		{
+			name:     "unrelated error",
+			err:      fmt.Errorf("some other error"),
+			expected: false,
+		},
+		{
+			name:     "nil error",
+			err:      nil,
+			expected: false,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			got := isGraphAuthorizationDenied(tc.err)
+			if got != tc.expected {
+				t.Errorf("isGraphAuthorizationDenied(%v) = %v, want %v", tc.err, got, tc.expected)
+			}
+		})
+	}
+}

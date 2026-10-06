@@ -1,0 +1,361 @@
+{
+  "label": "batched-schema-v2",
+  "generated_at": "2026-10-05T18:09:51+00:00",
+  "python": "3.13.14",
+  "sqlite": "3.46.1",
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "database": "fresh SQLite file per run in a removed TemporaryDirectory",
+  "fts5_available": true,
+  "sizes": {
+    "1000": {
+      "assets": {
+        "runs": 3,
+        "p50_ms": 5.074,
+        "p95_ms_nearest_rank": 5.138,
+        "commit_counts": [
+          1
+        ]
+      },
+      "edges": {
+        "runs": 3,
+        "p50_ms": 5.329,
+        "p95_ms_nearest_rank": 5.582,
+        "commit_counts": [
+          1
+        ]
+      },
+      "findings": {
+        "runs": 3,
+        "p50_ms": 18.692,
+        "p95_ms_nearest_rank": 19.141,
+        "commit_counts": [
+          1
+        ]
+      }
+    },
+    "10000": {
+      "assets": {
+        "runs": 3,
+        "p50_ms": 53.547,
+        "p95_ms_nearest_rank": 53.877,
+        "commit_counts": [
+          1
+        ]
+      },
+      "edges": {
+        "runs": 3,
+        "p50_ms": 53.084,
+        "p95_ms_nearest_rank": 54.381,
+        "commit_counts": [
+          1
+        ]
+      },
+      "findings": {
+        "runs": 3,
+        "p50_ms": 195.808,
+        "p95_ms_nearest_rank": 197.528,
+        "commit_counts": [
+          1
+        ]
+      }
+    },
+    "100000": {
+      "assets": {
+        "runs": 3,
+        "p50_ms": 524.004,
+        "p95_ms_nearest_rank": 554.511,
+        "commit_counts": [
+          1
+        ]
+      },
+      "edges": {
+        "runs": 3,
+        "p50_ms": 609.679,
+        "p95_ms_nearest_rank": 615.994,
+        "commit_counts": [
+          1
+        ]
+      },
+      "findings": {
+        "runs": 3,
+        "p50_ms": 2043.376,
+        "p95_ms_nearest_rank": 2229.52,
+        "commit_counts": [
+          1
+        ]
+      }
+    }
+  },
+  "samples": [
+    {
+      "label": "batched-schema-v2",
+      "size": 1000,
+      "repeat": 1,
+      "api": "assets",
+      "seconds": 0.005073718000062399,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 1000,
+      "repeat": 1,
+      "api": "edges",
+      "seconds": 0.005581999999890286,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 1000,
+      "repeat": 1,
+      "api": "findings",
+      "seconds": 0.019140703000061876,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": true
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 1000,
+      "repeat": 2,
+      "api": "assets",
+      "seconds": 0.00513825200005158,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 1000,
+      "repeat": 2,
+      "api": "edges",
+      "seconds": 0.0052299060000677855,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 1000,
+      "repeat": 2,
+      "api": "findings",
+      "seconds": 0.018692203999989943,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": true
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 1000,
+      "repeat": 3,
+      "api": "assets",
+      "seconds": 0.004978780999977062,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 1000,
+      "repeat": 3,
+      "api": "edges",
+      "seconds": 0.005328900999984398,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 1000,
+      "repeat": 3,
+      "api": "findings",
+      "seconds": 0.018327076999980818,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": true
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 10000,
+      "repeat": 1,
+      "api": "assets",
+      "seconds": 0.05354680899995401,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 10000,
+      "repeat": 1,
+      "api": "edges",
+      "seconds": 0.05308390400000462,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 10000,
+      "repeat": 1,
+      "api": "findings",
+      "seconds": 0.19752787900006297,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": true
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 10000,
+      "repeat": 2,
+      "api": "assets",
+      "seconds": 0.05387675900010436,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 10000,
+      "repeat": 2,
+      "api": "edges",
+      "seconds": 0.05438065500004541,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 10000,
+      "repeat": 2,
+      "api": "findings",
+      "seconds": 0.19580811100001938,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": true
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 10000,
+      "repeat": 3,
+      "api": "assets",
+      "seconds": 0.049817214999961834,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 10000,
+      "repeat": 3,
+      "api": "edges",
+      "seconds": 0.050728343000059795,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 10000,
+      "repeat": 3,
+      "api": "findings",
+      "seconds": 0.18520960599994396,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": true
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 100000,
+      "repeat": 1,
+      "api": "assets",
+      "seconds": 0.5545113549999314,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 100000,
+      "repeat": 1,
+      "api": "edges",
+      "seconds": 0.6159936630000402,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 100000,
+      "repeat": 1,
+      "api": "findings",
+      "seconds": 2.04337629500003,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": true
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 100000,
+      "repeat": 2,
+      "api": "assets",
+      "seconds": 0.5240044219999618,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 100000,
+      "repeat": 2,
+      "api": "edges",
+      "seconds": 0.5382110489999832,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 100000,
+      "repeat": 2,
+      "api": "findings",
+      "seconds": 2.229520237000088,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": true
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 100000,
+      "repeat": 3,
+      "api": "assets",
+      "seconds": 0.5175608659999398,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 100000,
+      "repeat": 3,
+      "api": "edges",
+      "seconds": 0.6096793140000045,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched-schema-v2",
+      "size": 100000,
+      "repeat": 3,
+      "api": "findings",
+      "seconds": 2.0357617470000378,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": true
+    }
+  ]
+}

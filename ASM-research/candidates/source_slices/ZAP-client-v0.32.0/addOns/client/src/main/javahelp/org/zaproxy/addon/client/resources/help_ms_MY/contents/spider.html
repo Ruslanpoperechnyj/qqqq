@@ -1,0 +1,67 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<HTML>
+<HEAD>
+<TITLE>
+Client Side Integration - Client Spider
+</TITLE>
+</HEAD>
+<BODY>
+<H1>Client Side Integration - Client Spider</H1>
+
+This <a href="client.html">add-on</a> adds a Client Spider which is designed to explore modern web apps more effectively.
+<p>
+The Client Spider is now the recommended option for automatically crawling modern web apps,
+as it out performs the older AJAX spider in all known cases.
+
+The Client Spider works in a similar way to the AJAX Spider but it has access to the DOM via the ZAP Browser Extension
+which means that it can find content which the AJAX Spider cannot find.
+<p>
+The Client Spider supports all of the authentication options supported by ZAP, and will run any enabled Selenium scripts in the browsers that it launches.
+
+<p>
+The spider can be invoked via:
+<ul>
+<li>Context specific "Attack" menu
+<li>"Tools / Client Spider" menu item
+<li>Automation Framework <a href="automation.html">spiderClient</a> job
+</ul>
+
+The default spider options can be set via the <a href="spider-options.html">Spider Options</a> panel.
+
+<h3>Client Spider dialog</h3>
+
+The dialog for starting the Client Spider provides 2 sub tabs:
+
+<h4>Scope</h4>
+
+This tab allows you to define what the spider will attempt to explore.
+<p>
+The Scope Check controls how the spider handles out-of-scope resources — see the <a href="spider-options.html">Spider Options</a> for details.
+<p>
+
+<h4>Options</h4>
+
+This tab allows you to override the default options that control how the spider works.
+See the <a href="spider-options.html">Spider Options</a> for a description of each option.
+
+<h3>Client Spider tab</h3>
+
+The Client Spider tab allows you start and monitor the Client Spider.
+It provides 3 sub tabs:
+
+<h4>Added Nodes</h4>
+
+These are the nodes that have been added to the Client Map.
+
+<h4>Tasks</h4>
+
+These are the tasks that spider uses to crawl the application. 
+The tasks are updated when they are added to the task list, when they start running, and when they complete.
+This allows you to understand what the Client Spider is actually doing much more clearly.
+
+<h4>Messages</h4>
+
+These are the HTTP(S) messages sent from the browsers that the client uses.
+
+</BODY>
+</HTML>

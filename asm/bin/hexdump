@@ -1,0 +1,64 @@
+#!/usr/bin/env python3
+"""hexdump (совместимая замена для testssl.sh).
+Поддерживает то, что реально использует testssl.sh:
+  hexdump -v -e '16/1 "%02X"' [файл|stdin]   — байты в HEX без пробелов
+  hexdump -C [файл|stdin]                    — классический вид (offset, hex, ascii)
+"""
+import re
+import sys
+
+
+def read(args):
+    files = []
+    skip_next = False
+    for a in args:
+        if skip_next:
+            skip_next = False
+            continue
+        if a in ("-e", "-f", "-n", "-s"):
+            skip_next = True
+            continue
+        if not a.startswith("-"):
+            files.append(a)
+    if files:
+        data = b""
+        for f in files:
+            with open(f, "rb") as fh:
+                data += fh.read()
+        return data
+    return sys.stdin.buffer.read()
+
+
+def main(argv):
+    if "-C" in argv:
+        data = read(argv)
+        for off in range(0, len(data), 16):
+            chunk = data[off:off + 16]
+            hexpart = " ".join(f"{b:02x}" for b in chunk)
+            hexpart = (hexpart[:23] + " " + hexpart[23:]) if len(chunk) > 8 else hexpart
+            text = "".join(chr(b) if 32 <= b < 127 else "." for b in chunk)
+            print(f"{off:08x}  {hexpart:<48}  |{text}|")
+        print(f"{len(data):08x}")
+        return 0
+
+    fmt = ""
+    if "-e" in argv:
+        fmt = argv[argv.index("-e") + 1]
+    data = read(argv)
+    m = re.search(r"(\d+)/1\s*\"%0?(\d*)([xX])(\s*)\"", fmt)
+    if not m:
+        print(" ".join(f"{b:02x}" for b in data))
+        return 0
+    per, width, kind, sep = int(m.group(1)), int(m.group(2) or 2), m.group(3), m.group(4)
+    out = []
+    for i in range(0, len(data), per):
+        for b in data[i:i + per]:
+            out.append(format(b, "02" + kind.lower()) if width <= 2 else f"{b:0{width}{kind.lower()}}")
+        if sep:
+            out.append(sep)
+    print("".join(out))
+    return 0
+
+
+if __name__ == "__main__":
+    sys.exit(main(sys.argv[1:]))

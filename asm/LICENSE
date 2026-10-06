@@ -1,0 +1,85 @@
+MIT License
+
+Copyright (c) 2026 ASM contributors
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+Эта лицензия покрывает только код самого инструмента. Она НЕ распространяется
+на следующее.
+
+## Сторонние инструменты
+
+`bin/install-tools.sh` скачивает отдельные программы, каждая со своей
+лицензией. Они не входят в этот репозиторий и распространяются на своих
+условиях. Перед использованием в коммерческих работах проверьте каждую:
+
+| инструмент | лицензия |
+|---|---|
+| nuclei, naabu, subfinder, httpx, dnsx, tlsx, katana, gau, ffuf | MIT |
+| amass | Apache-2.0 (OWASP) |
+| nmap | Nmap Public Source License — **не свободная**; для коммерческого применения читайте условия |
+| trivy | Apache-2.0 |
+| gitleaks | MIT |
+| trufflehog | AGPL-3.0 — **копилефт**; уточните, устраивает ли это |
+| osv-scanner | Apache-2.0 |
+| semgrep | LGPL-2.1 (ядро) + Community License для части правил |
+| wapiti | Apache-2.0 |
+| nikto | GPL-2.0 |
+| testssl.sh | GPL-2.0 |
+| PyYAML | MIT |
+| sqlite-vec | MIT / Apache-2.0 |
+
+Инструменты внутренней работы (раздел 19 плана) — те же правила:
+
+| инструмент | лицензия |
+|---|---|
+| chisel | MIT |
+| ligolo-ng | GPL-3.0 |
+| kerbrute | Apache-2.0 |
+| SharpHound | GPL-3.0 |
+| pspy | GPL-3.0 |
+| linpeas.sh, winPEASx64.exe (PEASS-ng) | **GPL-2.0 или новее** (проверено по файлу LICENSE) |
+| sqlmap | **GPL-2.0 или новее** (проверено по файлу LICENSE) |
+| hashcat | MIT (ядро), но ставится вручную — см. план, раздел 19.4 |
+
+Смысл GPL для этой работы: лицензия касается распространения, а не
+использования. Запускать GPL-инструмент по договору можно; встраивать его
+в продукт, который вы передаёте или продаёте, — уже нет. Различие важно,
+потому что в отчёте заказчику перечисляются инструменты.
+
+## Источники данных
+
+Отдельно от лицензий инструментов — условия использования данных:
+
+- **InternetDB (internetdb.shodan.io)** — бесплатно **только для
+  некоммерческого использования**. Если результаты анализа продаются
+  заказчику, это коммерческое использование, и источник нужно либо исключить,
+  либо согласовать с Shodan.
+- **NVD API** — без ключа действует ограничение 5 запросов / 30 секунд.
+- **crt.sh, CertSpotter, urlscan, OTX** — у каждого свои условия и лимиты;
+  часть требует ключа при интенсивном использовании.
+
+## Ограничение ответственности
+
+Инструмент предназначен исключительно для работ по договору: аудит, пентест,
+оценка защищённости — с письменным разрешением владельца системы. Использование
+против систем без разрешения нарушает закон (в России — ст. 272 УК РФ) и не
+покрывается этой лицензией.

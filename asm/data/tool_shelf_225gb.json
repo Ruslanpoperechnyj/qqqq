@@ -1,0 +1,644 @@
+{
+  "schema_version": 1,
+  "manifest_state": "scope-locked; exact release versions, hashes and operator-host presence still need verification; plan-listed Wordlust artifact remains unresolved",
+  "purpose": "Inventory for the approved local shelf. This file grants no execution rights and is not an installer.",
+  "capacity": {
+    "limit_decimal_gb": 225,
+    "limit_bytes": 225000000000,
+    "count_docker_images_and_volumes": true,
+    "count_vm_disks_and_snapshots": true,
+    "count_model_files_and_caches": true,
+    "count_release_archives_if_retained": true,
+    "exclude_weakpass_2a": true
+  },
+  "operator_environment": {
+    "os": "Windows",
+    "shell": "Git Bash launched from PowerShell",
+    "notes": [
+      "Git Bash is not a Linux package manager: do not use apt-get, gcc, dpkg-deb or VAR=value command syntax there.",
+      "Linux-only tools and Ansible dependencies belong in the isolated Kali/VM/container selected for the lab.",
+      "The Agent Mode workspace cannot inspect or write the operator's Windows disk; operator-host presence remains unverified until checked locally."
+    ]
+  },
+  "storage_roots": [
+    {
+      "id": "asm_tools",
+      "default_path": "build/tools",
+      "env": "ASM_TOOLS_DIR",
+      "includes": [
+        "bin",
+        "payloads",
+        "templates",
+        "lib",
+        "download cache"
+      ]
+    },
+    {
+      "id": "models",
+      "default_path": "build/llm",
+      "env": null,
+      "includes": [
+        "Gemma GGUF",
+        "MTP draft",
+        "model caches"
+      ],
+      "note": "Path is created by bin/install-llamacpp.ps1; no ASM_LLM_DIR setting confirmed."
+    },
+    {
+      "id": "wordlists",
+      "default_path": "data/wordlists",
+      "env": "ASM_WORDLISTS",
+      "includes": [
+        "SecLists password subset",
+        "rockyou",
+        "rules",
+        "optional CrackStation"
+      ]
+    },
+    {
+      "id": "source_review",
+      "default_path": "../ASM-research/candidates",
+      "env": null,
+      "includes": [
+        "static source archives and reviewed source slices"
+      ]
+    },
+    {
+      "id": "lab",
+      "default_path": "operator-selected",
+      "env": null,
+      "includes": [
+        "Kali VM",
+        "GOAD-Mini",
+        "Windows evaluation media",
+        "Docker/Greenbone/BloodHound data"
+      ],
+      "note": "No ASM_LAB_DIR support confirmed; VM and Docker storage roots must be selected and measured separately."
+    }
+  ],
+  "scope_rules": [
+    "Separate stored artifacts from agent-connected actions and from payloads transferred to a target.",
+    "No new binary becomes an agent action merely because it is installed or found in PATH.",
+    "All target-facing and cloud-facing execution remains behind the existing ASM proposal, approval, scope, profile, rate, timeout, STOP and audit gates.",
+    "Source archives collected for review are static-review material only; do not import or execute them until individually reviewed.",
+    "No C2, persistence, social engineering, malware, online credential guessing, session interception, customer-data modification, or log tampering."
+  ],
+  "explicit_exclusions": [
+    {
+      "id": "weakpass_2a",
+      "approx_decimal_gb": 90,
+      "status": "excluded by operator",
+      "action": "do not download, stage, count toward the approved shelf, or use"
+    },
+    {
+      "id": "C2, persistence, social-engineering, stealer/RAT, online credential guessing and other banned capabilities",
+      "status": "excluded by standing operator restrictions",
+      "action": "do not install or connect"
+    },
+    {
+      "id": "Mimikatz, PowerSploit/PowerUp, Cobalt Strike, Brute Ratel, Sliver, Havoc, Evilginx, Gophish",
+      "status": "explicitly excluded in ПЛАН.md §3.4 / operator restrictions",
+      "action": "do not stage as shelf items or connect to ASM"
+    }
+  ],
+  "known_size_estimate": {
+    "estimated_gb_before_unmeasured_candidates": 141,
+    "optional_crackstation_additional_gb": 4.2,
+    "unallocated_estimate_gb": 84,
+    "caveat": "Planning estimate only; final acceptance uses measured bytes on the operator host, including Docker and VM storage. The plan-listed Wordlust artifact is unresolved and is not counted."
+  },
+  "groups": [
+    {
+      "id": "asm_perimeter_core",
+      "state": "already-integrated-in-agent; operator-host files must be verified locally",
+      "install_entrypoint": "bin/install-tools.sh",
+      "default_shelf_path": "build/tools/bin",
+      "agent_connected": true,
+      "items": [
+        {
+          "id": "nuclei",
+          "action": "check_vulns"
+        },
+        {
+          "id": "nmap",
+          "action": "enum_services"
+        },
+        {
+          "id": "naabu",
+          "action": "enum_ports"
+        },
+        {
+          "id": "httpx",
+          "action": "probe_http"
+        },
+        {
+          "id": "katana",
+          "action": "crawl_links"
+        },
+        {
+          "id": "gau",
+          "action": "recon_archives"
+        },
+        {
+          "id": "nikto",
+          "binary": "nikto.pl",
+          "action": "check_webserver"
+        },
+        {
+          "id": "testssl.sh",
+          "action": "probe_testssl"
+        },
+        {
+          "id": "tlsx",
+          "action": "probe_tls"
+        },
+        {
+          "id": "subfinder",
+          "action": "recon_names"
+        },
+        {
+          "id": "amass",
+          "action": "recon_names"
+        },
+        {
+          "id": "dnsx",
+          "action": "recon_dns"
+        },
+        {
+          "id": "ffuf",
+          "action": "enum_paths"
+        },
+        {
+          "id": "trivy",
+          "action": "check_image"
+        },
+        {
+          "id": "gitleaks",
+          "action": "check_secrets"
+        },
+        {
+          "id": "trufflehog",
+          "action": "check_secrets"
+        },
+        {
+          "id": "semgrep",
+          "action": "check_code"
+        },
+        {
+          "id": "osv-scanner",
+          "action": "check_code"
+        },
+        {
+          "id": "wapiti",
+          "action": "check_webapp"
+        }
+      ]
+    },
+    {
+      "id": "projectdiscovery_catalog",
+      "state": "scope-approved-for-shelf; pin exact versions, asset URLs, licenses and hashes before download",
+      "catalog_definition": "Union of first-party CLI projects named by ProjectDiscovery's official Open Source documentation and official open-source landing page as reviewed on 2026-10-05; excludes hosted SaaS and library-only repositories.",
+      "unique_cli_projects_in_catalog_union": 23,
+      "new_cli_projects_beyond_current_asm_seven": 16,
+      "official_sources": [
+        "https://docs.projectdiscovery.io/opensource",
+        "https://projectdiscovery.io/open-source"
+      ],
+      "already_in_asm_core": [
+        "nuclei",
+        "naabu",
+        "subfinder",
+        "httpx",
+        "dnsx",
+        "tlsx",
+        "katana"
+      ],
+      "additional_shelf_items": [
+        {
+          "id": "cloudlist",
+          "execution": "cloud APIs; shelf-only pending permissions/egress review"
+        },
+        {
+          "id": "chaos-client",
+          "execution": "external data source; shelf-only pending source and egress review"
+        },
+        {
+          "id": "uncover",
+          "execution": "third-party search APIs; no SaaS scanning or paid API use"
+        },
+        {
+          "id": "asnmap",
+          "execution": "read-only research utility; not automatically connected"
+        },
+        {
+          "id": "alterx",
+          "execution": "local candidate generation; any resulting probing remains gated"
+        },
+        {
+          "id": "shuffledns",
+          "execution": "DNS candidate resolution; target-facing rate/scope gate required"
+        },
+        {
+          "id": "interactsh",
+          "execution": "OOB callback capability; shelf-only, no public callback use"
+        },
+        {
+          "id": "cvemap",
+          "execution": "local CLI with external vulnerability-data lookups; no customer data sent"
+        },
+        {
+          "id": "vulnx",
+          "execution": "local CLI with external vulnerability-data lookups; no customer data sent"
+        },
+        {
+          "id": "notify",
+          "execution": "egress/notification tool; shelf-only, never auto-send findings"
+        },
+        {
+          "id": "pdtm",
+          "execution": "tool manager; keep as artifact only, do not use unpinned install-all"
+        },
+        {
+          "id": "mapcidr",
+          "execution": "local data utility; no automatic agent registration"
+        },
+        {
+          "id": "cdncheck",
+          "execution": "network/data utility; scope and egress review before use"
+        },
+        {
+          "id": "aix",
+          "execution": "LLM API client; shelf-only, no customer context/API secrets"
+        },
+        {
+          "id": "proxify",
+          "execution": "traffic proxy/logging; shelf-only, no session interception"
+        },
+        {
+          "id": "simplehttpserver",
+          "execution": "local file server; shelf-only, do not expose directories"
+        },
+        {
+          "id": "nuclei-templates",
+          "kind": "data",
+          "execution": "pin and audit template release; existing ASM templates remain profile-filtered"
+        }
+      ],
+      "agent_connected": false
+    },
+    {
+      "id": "internal_ad_linux_arsenal",
+      "state": "approved-for-shelf; distinguish operator-reported-existing artifacts from unverified local presence",
+      "target_payloads_path": "build/tools/payloads",
+      "items": [
+        {
+          "id": "bloodhound-ce",
+          "kind": "Docker application/database",
+          "reported_presence": "planned separate install",
+          "agent_connected": false
+        },
+        {
+          "id": "sharphound-ce",
+          "kind": "collector",
+          "reported_presence": "SharpHound.exe reported in existing arsenal; verify on operator host",
+          "agent_connected": false
+        },
+        {
+          "id": "bloodhound.py",
+          "kind": "collector",
+          "agent_connected": false
+        },
+        {
+          "id": "PEASS-ng-linpeas",
+          "kind": "target payload",
+          "reported_presence": "linpeas reported existing; verify",
+          "agent_connected": false
+        },
+        {
+          "id": "PEASS-ng-winPEAS",
+          "kind": "target payload",
+          "reported_presence": "winPEAS reported existing; verify",
+          "agent_connected": false
+        },
+        {
+          "id": "Seatbelt",
+          "kind": "Windows host enumeration",
+          "agent_connected": false
+        },
+        {
+          "id": "pspy",
+          "kind": "Linux target payload",
+          "reported_presence": "pspy64 reported existing; verify",
+          "agent_connected": false
+        },
+        {
+          "id": "Sysmon",
+          "kind": "lab telemetry",
+          "reported_presence": "not verified",
+          "agent_connected": false
+        },
+        {
+          "id": "Sysmon configurations",
+          "kind": "lab configuration",
+          "items": [
+            "SwiftOnSecurity/sysmon-config",
+            "olafhartong/sysmon-modular"
+          ],
+          "agent_connected": false
+        },
+        {
+          "id": "NetExec",
+          "binary": "nxc",
+          "kind": "protocol/client suite",
+          "reported_presence": "separate install in plan; also listed in research candidates",
+          "agent_connected": false
+        },
+        {
+          "id": "Impacket",
+          "kind": "Python package/tool suite",
+          "agent_connected": false
+        },
+        {
+          "id": "evil-winrm",
+          "kind": "Ruby CLI",
+          "agent_connected": false
+        },
+        {
+          "id": "ligolo-ng",
+          "kind": "tunnel proxy and agents",
+          "reported_presence": "ligolo proxy/agents reported existing; verify",
+          "agent_connected": false
+        },
+        {
+          "id": "chisel",
+          "kind": "tunnel binary",
+          "reported_presence": "reported existing; verify",
+          "agent_connected": false
+        },
+        {
+          "id": "Kerbrute",
+          "kind": "Kerberos enumeration",
+          "reported_presence": "reported existing; verify",
+          "agent_connected": false
+        },
+        {
+          "id": "hashcat",
+          "kind": "offline hash-auditing binary",
+          "reported_presence": "not installed automatically in plan; requires full .7z extraction",
+          "agent_connected": false
+        },
+        {
+          "id": "Metasploit Framework",
+          "kind": "separate MSI/runtime",
+          "reported_presence": "separate, unverified install path",
+          "agent_connected": false
+        }
+      ]
+    },
+    {
+      "id": "research_candidates",
+      "state": "scope-approved-for-shelf; staging waits for the required static source/license/dependency review; no execution until individually cleared",
+      "agent_connected": false,
+      "items": [
+        {
+          "id": "AD-Miner",
+          "scope": "offline graph analytics",
+          "caveat": "separate copy of Neo4j/BloodHound DB; disable version-check egress; protect/retain originals"
+        },
+        {
+          "id": "ADACLScanner",
+          "scope": "AD ACL assessment",
+          "caveat": "pin local reference data; inspect report handling; target queries remain approval-gated"
+        },
+        {
+          "id": "Certipy",
+          "package": "certipy-ad",
+          "scope": "AD CS review",
+          "caveat": "only specifically audited read-only subcommands; no enrollment/abuse/impact paths"
+        },
+        {
+          "id": "AzureHound",
+          "scope": "Entra/Azure graph collection",
+          "caveat": "allowlisted read-only collection; review output fields and external egress"
+        },
+        {
+          "id": "Entra App Exposure",
+          "scope": "Entra app-identity review",
+          "caveat": "sensitive snapshots; no consent/role assignment or token-output exposure"
+        },
+        {
+          "id": "Maester",
+          "scope": "M365/Entra policy checks",
+          "caveat": "disable telemetry/version lookups; no setup/consent/role/write helpers"
+        },
+        {
+          "id": "Prowler",
+          "scope": "AWS/Azure/GCP/Entra posture",
+          "caveat": "module allowlists; exclude secret-bearing resource metadata and fixer/push paths"
+        },
+        {
+          "id": "ZAP Client Side Integration",
+          "scope": "SPA crawling",
+          "caveat": "shelf-only until state-changing clicks/form submissions are prevented"
+        },
+        {
+          "id": "Greenbone CE",
+          "scope": "local scanner service",
+          "caveat": "isolated lab only; reserve 60 GB; never scan a real target without separate gates"
+        },
+        {
+          "id": "Monkey365",
+          "scope": "M365/Entra/Azure assessment",
+          "caveat": "source-review exact API permissions, egress and sensitive outputs"
+        },
+        {
+          "id": "Steampipe",
+          "scope": "cloud SQL plugins",
+          "caveat": "pin provider plugins; exclude exec/mutating workflows"
+        },
+        {
+          "id": "Powerpipe",
+          "scope": "local cloud benchmark dashboards",
+          "caveat": "pin benchmark mods/plugins; local output only"
+        },
+        {
+          "id": "Cartography",
+          "scope": "local multi-cloud graph",
+          "caveat": "separate local DB; review secret-value endpoints and serialization"
+        },
+        {
+          "id": "ScubaGear",
+          "scope": "M365/Entra assessment",
+          "caveat": "exclude tenant setup/registration and role-changing helpers"
+        },
+        {
+          "id": "CloudSplaining",
+          "scope": "offline AWS IAM policy analysis",
+          "caveat": "select local file mode; resolve license metadata discrepancy"
+        },
+        {
+          "id": "CloudFox",
+          "scope": "cloud situational awareness",
+          "caveat": "secret/loot-bearing commands excluded from agent integration"
+        },
+        {
+          "id": "BBOT",
+          "scope": "internet reconnaissance framework",
+          "caveat": "curate modules/egress; no broad active scan or external output modules"
+        },
+        {
+          "id": "Checkov",
+          "scope": "local IaC analysis",
+          "caveat": "offline static checks only; establish incremental value over Trivy"
+        },
+        {
+          "id": "NetExec",
+          "scope": "SMB/LDAP/WinRM/etc. client suite",
+          "reuse_internal_item": "internal_ad_linux_arsenal/NetExec",
+          "caveat": "single staged copy; no credential attack, credential-storage exposure, or command-execution feature wired to ASM"
+        }
+      ]
+    },
+    {
+      "id": "lab_and_runtime",
+      "state": "approved-for-shelf; versions and actual footprints to pin/measure",
+      "items": [
+        {
+          "id": "Kali Linux",
+          "kind": "VM image",
+          "approx_decimal_gb": 12.2,
+          "agent_connected": false
+        },
+        {
+          "id": "Docker Engine",
+          "kind": "local container runtime",
+          "agent_connected": false
+        },
+        {
+          "id": "BloodHound CE containers",
+          "kind": "local graph application",
+          "approx_decimal_gb": 10,
+          "agent_connected": false,
+          "same_artifact_as": "internal_ad_linux_arsenal/bloodhound-ce",
+          "count_once": true
+        },
+        {
+          "id": "GOAD-Mini",
+          "kind": "isolated AD lab",
+          "approx_decimal_gb": 40,
+          "agent_connected": false
+        },
+        {
+          "id": "VMware Workstation Pro or VirtualBox 7.x",
+          "kind": "one selected hypervisor",
+          "agent_connected": false
+        },
+        {
+          "id": "Vagrant",
+          "kind": "lab provisioning",
+          "agent_connected": false
+        },
+        {
+          "id": "Ansible",
+          "kind": "lab provisioning; install in Linux lab environment",
+          "agent_connected": false
+        },
+        {
+          "id": "Python",
+          "kind": "lab/runtime dependency",
+          "agent_connected": false
+        },
+        {
+          "id": "Windows Server evaluation media",
+          "kind": "lab-only media; measure separately",
+          "agent_connected": false
+        },
+        {
+          "id": "Greenbone CE images and feeds",
+          "kind": "isolated lab service",
+          "approx_recommended_decimal_gb": 60,
+          "requirements_source": "https://greenbone.github.io/docs/latest/22.4/container/index.html#hardware-requirements",
+          "license_source": "https://greenbone.github.io/docs/latest/background.html",
+          "agent_connected": false,
+          "same_artifact_as": "research_candidates/Greenbone CE",
+          "count_once": true
+        }
+      ]
+    },
+    {
+      "id": "models_and_wordlists",
+      "state": "approved items only; preserve final model decision and online-execution gates",
+      "items": [
+        {
+          "id": "Gemma 4 12B QAT Q4_0 GGUF",
+          "kind": "primary local model",
+          "approx_decimal_gb": 6.72,
+          "agent_connected": "chat model only"
+        },
+        {
+          "id": "Gemma 4 MTP draft",
+          "kind": "llama.cpp acceleration artifact",
+          "approx_decimal_gb": 0.254,
+          "agent_connected": "chat model only"
+        },
+        {
+          "id": "Qwen3-Coder-Next",
+          "kind": "previously tested, not primary replacement",
+          "action": "verify local presence; do not redownload automatically"
+        },
+        {
+          "id": "SecLists password subset",
+          "kind": "offline data",
+          "approx_decimal_gb": 0.655,
+          "agent_connected": false
+        },
+        {
+          "id": "rockyou.txt",
+          "kind": "offline data",
+          "approx_decimal_gb": 0.133,
+          "agent_connected": false
+        },
+        {
+          "id": "best64.rule",
+          "kind": "offline hash-audit rule",
+          "agent_connected": false
+        },
+        {
+          "id": "rockyou-30000.rule",
+          "kind": "offline hash-audit rule",
+          "agent_connected": false
+        },
+        {
+          "id": "d3ad0ne.rule",
+          "kind": "offline hash-audit rule",
+          "agent_connected": false
+        },
+        {
+          "id": "OneRuleToRuleThemAll",
+          "kind": "offline hash-audit rule",
+          "agent_connected": false
+        },
+        {
+          "id": "CrackStation",
+          "kind": "optional dictionary",
+          "approx_decimal_gb": 4.2,
+          "action": "download only if later needed and still within cap"
+        }
+      ]
+    }
+  ],
+  "unresolved_inventory_items": [
+    {
+      "id": "Wordlust",
+      "plan_reference": "ПЛАН.md §3.5",
+      "source_url": "https://github.com/frizb/Wordlust",
+      "observed_on": "2026-10-05",
+      "status": "plan-listed; exact dataset artifact is unresolved, not excluded",
+      "upstream_observation": "The upstream page lists only LICENSE and README.md, with no tags/releases or wordlist file. Its README describes a target list size of roughly 50 GB and says the base list is assembled from leaked/cracked-password lists plus other sources; this is a planning target, not a measured downloadable artifact.",
+      "planning_only_decimal_gb": 50,
+      "counted_in_known_estimate": false,
+      "agent_connected": false,
+      "action": "Do not synthesize a list or fetch an undocumented mirror. Identify the exact file, provenance/license, version, size and checksum before staging; preserve this entry as unresolved until then."
+    }
+  ]
+}

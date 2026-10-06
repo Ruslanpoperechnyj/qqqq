@@ -1,0 +1,361 @@
+{
+  "label": "baseline",
+  "generated_at": "2026-10-05T17:25:52+00:00",
+  "python": "3.13.14",
+  "sqlite": "3.46.1",
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "database": "fresh SQLite file per run in a removed TemporaryDirectory",
+  "fts5_available": true,
+  "sizes": {
+    "1000": {
+      "assets": {
+        "runs": 3,
+        "p50_ms": 60.038,
+        "p95_ms_nearest_rank": 60.156,
+        "commit_counts": [
+          1000
+        ]
+      },
+      "edges": {
+        "runs": 3,
+        "p50_ms": 58.665,
+        "p95_ms_nearest_rank": 58.976,
+        "commit_counts": [
+          1000
+        ]
+      },
+      "findings": {
+        "runs": 3,
+        "p50_ms": 179.271,
+        "p95_ms_nearest_rank": 179.903,
+        "commit_counts": [
+          2000
+        ]
+      }
+    },
+    "10000": {
+      "assets": {
+        "runs": 3,
+        "p50_ms": 625.384,
+        "p95_ms_nearest_rank": 661.698,
+        "commit_counts": [
+          10000
+        ]
+      },
+      "edges": {
+        "runs": 3,
+        "p50_ms": 647.394,
+        "p95_ms_nearest_rank": 662.925,
+        "commit_counts": [
+          10000
+        ]
+      },
+      "findings": {
+        "runs": 3,
+        "p50_ms": 1977.463,
+        "p95_ms_nearest_rank": 2042.408,
+        "commit_counts": [
+          20000
+        ]
+      }
+    },
+    "100000": {
+      "assets": {
+        "runs": 3,
+        "p50_ms": 6464.705,
+        "p95_ms_nearest_rank": 6494.473,
+        "commit_counts": [
+          100000
+        ]
+      },
+      "edges": {
+        "runs": 3,
+        "p50_ms": 6230.39,
+        "p95_ms_nearest_rank": 6540.552,
+        "commit_counts": [
+          100000
+        ]
+      },
+      "findings": {
+        "runs": 3,
+        "p50_ms": 19819.604,
+        "p95_ms_nearest_rank": 20289.435,
+        "commit_counts": [
+          200000
+        ]
+      }
+    }
+  },
+  "samples": [
+    {
+      "label": "baseline",
+      "size": 1000,
+      "repeat": 1,
+      "api": "assets",
+      "seconds": 0.06003811299979134,
+      "commits": 1000,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 1000,
+      "repeat": 1,
+      "api": "edges",
+      "seconds": 0.058975709000151255,
+      "commits": 1000,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 1000,
+      "repeat": 1,
+      "api": "findings",
+      "seconds": 0.17990259399994102,
+      "commits": 2000,
+      "rows": 1000,
+      "fts5": true
+    },
+    {
+      "label": "baseline",
+      "size": 1000,
+      "repeat": 2,
+      "api": "assets",
+      "seconds": 0.060155626999403466,
+      "commits": 1000,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 1000,
+      "repeat": 2,
+      "api": "edges",
+      "seconds": 0.05840435800018895,
+      "commits": 1000,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 1000,
+      "repeat": 2,
+      "api": "findings",
+      "seconds": 0.17927071000030992,
+      "commits": 2000,
+      "rows": 1000,
+      "fts5": true
+    },
+    {
+      "label": "baseline",
+      "size": 1000,
+      "repeat": 3,
+      "api": "assets",
+      "seconds": 0.05729932299982465,
+      "commits": 1000,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 1000,
+      "repeat": 3,
+      "api": "edges",
+      "seconds": 0.0586652009997124,
+      "commits": 1000,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 1000,
+      "repeat": 3,
+      "api": "findings",
+      "seconds": 0.17694417700022314,
+      "commits": 2000,
+      "rows": 1000,
+      "fts5": true
+    },
+    {
+      "label": "baseline",
+      "size": 10000,
+      "repeat": 1,
+      "api": "assets",
+      "seconds": 0.6253843200001938,
+      "commits": 10000,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 10000,
+      "repeat": 1,
+      "api": "edges",
+      "seconds": 0.6473941519998334,
+      "commits": 10000,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 10000,
+      "repeat": 1,
+      "api": "findings",
+      "seconds": 1.8593721110000843,
+      "commits": 20000,
+      "rows": 10000,
+      "fts5": true
+    },
+    {
+      "label": "baseline",
+      "size": 10000,
+      "repeat": 2,
+      "api": "assets",
+      "seconds": 0.6616984400006913,
+      "commits": 10000,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 10000,
+      "repeat": 2,
+      "api": "edges",
+      "seconds": 0.6046856359998856,
+      "commits": 10000,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 10000,
+      "repeat": 2,
+      "api": "findings",
+      "seconds": 1.9774629629991978,
+      "commits": 20000,
+      "rows": 10000,
+      "fts5": true
+    },
+    {
+      "label": "baseline",
+      "size": 10000,
+      "repeat": 3,
+      "api": "assets",
+      "seconds": 0.5917704140001661,
+      "commits": 10000,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 10000,
+      "repeat": 3,
+      "api": "edges",
+      "seconds": 0.6629247439996107,
+      "commits": 10000,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 10000,
+      "repeat": 3,
+      "api": "findings",
+      "seconds": 2.0424083560001236,
+      "commits": 20000,
+      "rows": 10000,
+      "fts5": true
+    },
+    {
+      "label": "baseline",
+      "size": 100000,
+      "repeat": 1,
+      "api": "assets",
+      "seconds": 6.441542745999868,
+      "commits": 100000,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 100000,
+      "repeat": 1,
+      "api": "edges",
+      "seconds": 6.540552102999754,
+      "commits": 100000,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 100000,
+      "repeat": 1,
+      "api": "findings",
+      "seconds": 19.819604055000127,
+      "commits": 200000,
+      "rows": 100000,
+      "fts5": true
+    },
+    {
+      "label": "baseline",
+      "size": 100000,
+      "repeat": 2,
+      "api": "assets",
+      "seconds": 6.464704526999412,
+      "commits": 100000,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 100000,
+      "repeat": 2,
+      "api": "edges",
+      "seconds": 6.208720758000709,
+      "commits": 100000,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 100000,
+      "repeat": 2,
+      "api": "findings",
+      "seconds": 20.289435499999854,
+      "commits": 200000,
+      "rows": 100000,
+      "fts5": true
+    },
+    {
+      "label": "baseline",
+      "size": 100000,
+      "repeat": 3,
+      "api": "assets",
+      "seconds": 6.494472888999553,
+      "commits": 100000,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 100000,
+      "repeat": 3,
+      "api": "edges",
+      "seconds": 6.2303902510002445,
+      "commits": 100000,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "baseline",
+      "size": 100000,
+      "repeat": 3,
+      "api": "findings",
+      "seconds": 19.419170537000355,
+      "commits": 200000,
+      "rows": 100000,
+      "fts5": true
+    }
+  ]
+}

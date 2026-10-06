@@ -1,0 +1,11 @@
+sam,display,domain,enabled,bad_pwd,last_logon
+svc_deploy,Deploy Service,AD,1,0,2026-10-05
+svc_backup,Backup Service,AD,1,4,2026-09-30
+j.doe,John Doe,AD,1,0,2026-10-01
+t.lead,Tanya Lead,AD,1,0,2026-10-06
+helpdesk1,Helpdesk L1,AD,1,0,2026-10-06
+helpdesk2,Helpdesk L2,AD,1,0,2026-09-29
+ops1,Ops One,AD,1,0,2026-10-04
+admin_da,Domain Admin,AD,1,0,2025-12-01
+legacy_adm,Legacy Admin,AD,0,0,
+contractor_svc,Contractor Service,CONTOSO,1,0,2026-10-03

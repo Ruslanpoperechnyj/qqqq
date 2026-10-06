@@ -1,0 +1,67 @@
+﻿function Test-MtContext {
+    <#
+    .SYNOPSIS
+    Validates the MgContext to ensure a valid connection to Microsoft Graph including the required permissions.
+    #>
+    [CmdletBinding()]
+    [OutputType([bool])]
+    param (
+        # If specified, the scope will be checked to send email.
+        [Parameter(Mandatory = $false)]
+        [switch] $SendMail,
+
+        # If specified, the scope will be checked to send Teams channel messages.
+        [Parameter(Mandatory = $false)]
+        [switch] $SendTeamsMessage,
+
+        # If specified, scopes required by preview tests will be checked.
+        [Parameter(Mandatory = $false)]
+        [switch] $IncludePreview
+    )
+
+    $validContext = $true
+    $shouldCrash = $true
+    if (-not ($context = Get-MgContext)) {
+        $message = "Not connected to Microsoft Graph. Please use 'Connect-Maester'. For more information, use 'Get-Help Connect-Maester'."
+        $validContext = $false
+    } else {
+        $requiredScopes = if ($context.AuthType -eq 'Delegated') {
+            Get-MtGraphScope -SendMail:$SendMail -SendTeamsMessage:$SendTeamsMessage `
+                -IncludePreview:$IncludePreview
+        } else {
+            # Do not include Mail.Send for applications. Not compatible with Exchange Online RBAC for Applications
+            Get-MtGraphScope -SendTeamsMessage:$SendTeamsMessage -IncludePreview:$IncludePreview
+        }
+        $scopeComparison = Compare-MtGraphScope `
+            -CurrentScopes $context.Scopes `
+            -RequiredScopes $requiredScopes
+        $missingScopes = $scopeComparison.MissingScopes
+
+        if ($missingScopes) {
+            $message = "⚠️  These Graph permissions are missing in the current connection => ($($missingScopes))."
+
+            if ($context.AuthType -eq 'Delegated') {
+                $message += " Please use 'Connect-Maester'. For more information, use 'Get-Help Connect-Maester'."
+
+            } else {
+                $clientId = $context.ClientId
+                $urlTemplate = "https://entra.microsoft.com/#view/Microsoft_AAD_RegisteredApps/ApplicationMenuBlade/~/CallAnAPI/appId/$clientId/isMSAApp~/false"
+                $message += " Add the missing 'Application' permissions in the Microsoft Entra portal and grant consent. You will also need to Disconnect-Graph to refresh the permissions."
+                $message += " Click here to open the 'API Permissions' blade for this app (GitHub/Azure DevOps might prevent this link from working): $urlTemplate"
+                $shouldCrash = $false
+            }
+            $validContext = $false
+        }
+    }
+
+    if (!$validContext) {
+        if ($shouldCrash) {
+            throw $message
+        }
+        else {
+            Write-Warning "⚠️  Continuing with missing permissions; expect failures."
+            Write-Warning $message
+        }
+    }
+    return $validContext
+}

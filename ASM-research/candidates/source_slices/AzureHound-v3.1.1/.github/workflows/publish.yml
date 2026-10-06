@@ -1,0 +1,184 @@
+name: Publish
+
+on:
+  push:
+    tags:
+      - v*.*.*
+env:
+  AZUREHOUND_VERSION: ${{ github.ref_name }}
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - darwin
+          - linux
+          - windows
+        arch:
+          - amd64
+          - arm64
+
+    env:
+      FILE_NAME: AzureHound_${{ github.ref_name }}_${{ matrix.os }}_${{ matrix.arch }}
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
+
+      - name: Setup Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # ratchet:actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          check-latest: true
+          cache: true
+
+      - name: Generate Windows Resources
+        if: matrix.os == 'windows'
+        continue-on-error: true
+        run: |
+          echo "Generating Windows resources..."
+          go run winres/generate-windows-resources/generate-windows-resources.go "${{ env.AZUREHOUND_VERSION }}"
+
+      - name: Build
+        run: |
+          output=azurehound
+          if [ "$GOOS" = windows ]; then
+            output="${output}.exe"
+          fi
+          go build -o "$output" -ldflags="-s -w -X github.com/SpecterOps/AzureHound/v2/constants.Version=${{ env.AZUREHOUND_VERSION }}"
+        env:
+          GOOS: ${{ matrix.os }}
+          GOARCH: ${{ matrix.arch }}
+
+      - name: Upload as Artifact
+        if: matrix.os == 'windows'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # ratchet:actions/upload-artifact@v7.0.1
+        with:
+          name: azurehound-bin-${{ matrix.os }}-${{ matrix.arch }}
+          path: azurehound*
+
+      - name: Zip
+        run: 7z a -tzip -mx9 ${{ env.FILE_NAME }}.zip azurehound*
+
+      - name: Compute Checksum
+        run: sha256sum ${{ env.FILE_NAME }}.zip > ${{ env.FILE_NAME }}.zip.sha256
+
+      - name: Upload Release
+        uses: softprops/action-gh-release@b4309332981a82ec1c5618f44dd2e27cc8bfbfda # ratchet:softprops/action-gh-release@v3
+        with:
+          files: |
+            ${{ env.FILE_NAME }}.zip
+            ${{ env.FILE_NAME }}.zip.sha256
+
+  sign:
+    runs-on: ubuntu-22.04 # INFO: https://docs.digicert.com/en/digicert-keylocker/code-signing/sign-with-third-party-signing-tools/windows-applications/sign-authenticode-files-with-osslsigncode-using-openssl-pkcs11-engine.html#a-note-for-ubuntu-users-488674
+    needs: build
+    strategy:
+      matrix:
+        os:
+          - windows
+        arch:
+          - amd64
+          - arm64
+
+    env:
+      FILE_NAME: AzureHoundEnterprise_${{ github.ref_name }}_${{ matrix.os }}_${{ matrix.arch }}
+
+    steps:
+      - uses: aws-actions/configure-aws-credentials@ec61189d14ec14c8efccab744f656cffd0e33f37 # ratchet:aws-actions/configure-aws-credentials@v6
+        with:
+          aws-access-key-id: ${{ secrets.BHE_AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.BHE_AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # ratchet:actions/download-artifact@v8.0.1
+        with:
+          name: azurehound-bin-${{ matrix.os }}-${{ matrix.arch }}
+          path: unsigned/azurehound-bin-${{ matrix.os }}-${{ matrix.arch }}
+
+      - name: Setup SM_CLIENT_CERT_FILE
+        shell: bash
+        env:
+          SM_CLIENT_CERT_FILE_B64: ${{ secrets.SM_CLIENT_CERT_FILE_B64 }}
+        run: |
+          SM_CLIENT_CERT_FILE="${RUNNER_TEMP}/Certificate_pkcs12.p12"
+          printenv SM_CLIENT_CERT_FILE_B64 | base64 --decode > "$SM_CLIENT_CERT_FILE"
+          echo "SM_CLIENT_CERT_FILE=${SM_CLIENT_CERT_FILE}" >> "$GITHUB_ENV"
+
+      - name: Setup Software Trust Manager & Sign
+        id: digicert
+        uses: digicert/code-signing-software-trust-action@fae23a455ba4bde62b64fd7cb2f81ade788f5a95 # ratchet:digicert/code-signing-software-trust-action@v1.2.1
+        with:
+          simple-signing-mode: true
+          input: unsigned/azurehound-bin-${{ matrix.os }}-${{ matrix.arch }}/azurehound.exe
+          keypair-alias: ${{ secrets.SM_KEYPAIR_ALIAS }}
+        env:
+          SM_HOST: ${{ secrets.SM_HOST }}
+          SM_API_KEY: ${{ secrets.SM_API_KEY }}
+          SM_CLIENT_CERT_FILE: ${{ env.SM_CLIENT_CERT_FILE}}
+          SM_CLIENT_CERT_PASSWORD: ${{ secrets.SM_CLIENT_CERT_PASSWORD }}
+
+      - name: Cleanup cert file
+        if: always()
+        shell: bash
+        run: rm -f "${{ env.SM_CLIENT_CERT_FILE }}"
+
+      - name: Move Signed Artifacts
+        shell: bash
+        run: |
+          mkdir signed
+          mv unsigned/azurehound-bin-${{ matrix.os }}-${{ matrix.arch }}/azurehound.exe signed/azurehound.exe
+
+      - name: Zip Signed Executables
+        run: |
+          mkdir zipped
+          7z a -tzip -mx9 zipped/${{ env.FILE_NAME }}.zip signed/*
+
+      - name: Checksum Zipped Files
+        run: |
+          sha256sum zipped/${{ env.FILE_NAME }}.zip > zipped/${{ env.FILE_NAME }}.zip.sha256
+
+      - name: Upload Artifacts to S3
+        run: |
+          aws s3 cp --recursive zipped/ s3://${{ secrets.BHE_AWS_BUCKET }}
+
+  containerize:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # ratchet:actions/checkout@v6
+
+      - name: Log in to GHCR
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # ratchet:docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log in to ACR
+        uses: docker/login-action@4907a6ddec9925e35a0a9e82d7399ccc52663121 # ratchet:docker/login-action@v4
+        with:
+          registry: ${{ secrets.ACR_AZUREHOUND_REGISTRY_URL }}
+          username: ${{ secrets.ACR_CLIENT_ID }}
+          password: ${{ secrets.ACR_SECRET }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@030e881283bb7a6894de51c315a6bfe6a94e05cf # ratchet:docker/metadata-action@v6
+        with:
+          images: |
+            ghcr.io/SpecterOps/AzureHound
+            ${{ secrets.ACR_AZUREHOUND_REGISTRY_URL }}/azurehound
+          tags: |
+            type=semver,pattern={{version}},prefix=v
+            type=semver,pattern={{major}}.{{minor}},prefix=v
+
+      - name: Build Container Image
+        uses: docker/build-push-action@bcafcacb16a39f128d818304e6c9c0c18556b85f # ratchet:docker/build-push-action@v7
+        with:
+          context: .
+          build-args: VERSION=${{ github.ref_name }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          push: true

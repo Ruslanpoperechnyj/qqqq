@@ -1,0 +1,96 @@
+{
+  "date": "2026-10-05",
+  "method": "safe extraction of regular text/source files only; no downloaded programs were run or imported",
+  "items": [
+    {
+      "name": "SharpHound-v2.17.0",
+      "archive": "SharpHound-v2.17.0.tar.gz",
+      "archive_sha256": "2c2d91b3657a82998687700bbb3a74bcf63327cd2ce4c88c1ccd919a6f736b27",
+      "files_written": 39,
+      "bytes_written": 252021,
+      "rejected_or_skipped": [],
+      "rejected_count": 0
+    },
+    {
+      "name": "AD-Miner-v1.9.0",
+      "archive": "AD-Miner-v1.9.0.tar.gz",
+      "archive_sha256": "68eb0eb819e47a1deed96c9c7ec77b3ec246730ec13b6be9ba06ec39952a7d44",
+      "files_written": 102,
+      "bytes_written": 755266,
+      "rejected_or_skipped": [],
+      "rejected_count": 0
+    },
+    {
+      "name": "ADACLScanner-9.6",
+      "archive": "ADACLScanner-9.6.tar.gz",
+      "archive_sha256": "f27f3a86c6cb0d60d7a044a9740f1a2c45288ad5af29d466b29b8385690ea74e",
+      "files_written": 3,
+      "bytes_written": 883671,
+      "rejected_or_skipped": [],
+      "rejected_count": 0
+    },
+    {
+      "name": "Certipy-5.1.0",
+      "archive": "Certipy-5.1.0-sdist.tar.gz",
+      "archive_sha256": "2b10b3a4e91f8aa1c7e403fef2ec5aa89d84a69e09e7e6e0602af3e036f4271e",
+      "files_written": 58,
+      "bytes_written": 714008,
+      "rejected_or_skipped": [],
+      "rejected_count": 0
+    },
+    {
+      "name": "AzureHound-v3.1.1",
+      "archive": "AzureHound-v3.1.1.tar.gz",
+      "archive_sha256": "e8b487e2fa894e6f492a6213f814db946aed9d9f9fa30f0b8f9f127c630aa6b6",
+      "files_written": 571,
+      "bytes_written": 1466184,
+      "rejected_or_skipped": [],
+      "rejected_count": 0
+    },
+    {
+      "name": "EntraAppExposure-v1.0.0",
+      "archive": "EntraAppExposure-v1.0.0.tar.gz",
+      "archive_sha256": "a0ec2a27dd8c047e7af39919c6dfe4dc2cacd4485ab389bc36e8afda5109dd10",
+      "files_written": 34,
+      "bytes_written": 517698,
+      "rejected_or_skipped": [],
+      "rejected_count": 0
+    },
+    {
+      "name": "NetExec-v1.5.1",
+      "archive": "NetExec-v1.5.1.tar.gz",
+      "archive_sha256": "75de40a2f93b39f502d80487c2cdad08b86167882daccb78c43cf4ebad817fa5",
+      "files_written": 264,
+      "bytes_written": 2287209,
+      "rejected_or_skipped": [],
+      "rejected_count": 0
+    },
+    {
+      "name": "RustHound-CE-v2.5.22",
+      "archive": "RustHound-CE-v2.5.22.tar.gz",
+      "archive_sha256": "099a765574b18a72fd5a79efce793e95d2d62cac9cd5f21253eea1b1833b0c09",
+      "files_written": 87,
+      "bytes_written": 1085817,
+      "rejected_or_skipped": [],
+      "rejected_count": 0
+    },
+    {
+      "name": "Maester-2.2.97-preview",
+      "archive": "temporary download in /tmp; not retained",
+      "archive_sha256": "6e00a3cf669e6f6892d4a7ffdb82bef68ab40c7a424946c39fe031ed230cd830",
+      "files_written": 2290,
+      "bytes_written": 5990891,
+      "rejected_or_skipped": [],
+      "rejected_count": 0
+    },
+    {
+      "name": "ZAP-client-v0.32.0",
+      "archive": "temporary download in /tmp; not retained",
+      "archive_sha256": "4ae8f95f26ab2377d1950dc1d1718db4d9d0c637e48b60c238b308e12b9f8c6d",
+      "files_written": 497,
+      "bytes_written": 3644996,
+      "rejected_or_skipped": [],
+      "rejected_count": 0
+    }
+  ]
+}

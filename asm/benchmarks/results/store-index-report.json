@@ -1,0 +1,431 @@
+{
+  "generated_at": "2026-10-05T18:09:13+00:00",
+  "python": "3.13.14",
+  "sqlite": "3.46.1",
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "database": "temporary SQLite file per size; removed after run",
+  "method": "legacy-index baseline vs standard schema-v2 migration; warm p50; exact result equality",
+  "repeat": 5,
+  "cases": [
+    {
+      "size": 1000,
+      "rows_equal": true,
+      "storage_before": {
+        "page_count": 154,
+        "page_size_bytes": 4096,
+        "allocated_bytes": 630784,
+        "free_pages": 0
+      },
+      "storage_after": {
+        "page_count": 215,
+        "page_size_bytes": 4096,
+        "allocated_bytes": 880640,
+        "free_pages": 0
+      },
+      "before": {
+        "scans_by_target": {
+          "runs": 5,
+          "p50_ms": 0.031,
+          "rows": 10,
+          "plan": "SCAN scans"
+        },
+        "last_done_scan": {
+          "runs": 5,
+          "p50_ms": 0.008,
+          "rows": 1,
+          "plan": "SCAN scans"
+        },
+        "stale_scans": {
+          "runs": 5,
+          "p50_ms": 0.039,
+          "rows": 1,
+          "plan": "SCAN scans"
+        },
+        "findings_by_scan_score": {
+          "runs": 5,
+          "p50_ms": 0.019,
+          "rows": 20,
+          "plan": "SEARCH findings USING INDEX idx_findings_scan (scan_id=?) | USE TEMP B-TREE FOR ORDER BY"
+        },
+        "pending_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 0.012,
+          "rows": 6,
+          "plan": "SEARCH agent_steps USING INDEX idx_agent_steps_session (session_id=?) | USE TEMP B-TREE FOR ORDER BY"
+        },
+        "all_agent_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 0.017,
+          "rows": 20,
+          "plan": "SEARCH agent_steps USING INDEX idx_agent_steps_session (session_id=?) | USE TEMP B-TREE FOR ORDER BY"
+        },
+        "chat_history": {
+          "runs": 5,
+          "p50_ms": 0.061,
+          "rows": 20,
+          "plan": "SCAN chats"
+        },
+        "views_for_scan": {
+          "runs": 5,
+          "p50_ms": 0.056,
+          "rows": 20,
+          "plan": "SCAN views"
+        },
+        "open_agent_sessions": {
+          "runs": 5,
+          "p50_ms": 0.044,
+          "rows": 10,
+          "plan": "SCAN s | SEARCH t USING INTEGER PRIMARY KEY (rowid=?) LEFT-JOIN"
+        },
+        "kb_refinement_lookup": {
+          "runs": 5,
+          "p50_ms": 0.035,
+          "rows": 1,
+          "plan": "SCAN kb_refinements"
+        }
+      },
+      "after": {
+        "scans_by_target": {
+          "runs": 5,
+          "p50_ms": 0.009,
+          "rows": 10,
+          "plan": "SEARCH scans USING COVERING INDEX idx_scans_target_id_desc (target_id=?)"
+        },
+        "last_done_scan": {
+          "runs": 5,
+          "p50_ms": 0.006,
+          "rows": 1,
+          "plan": "SEARCH scans USING INDEX idx_scans_target_id_desc (target_id=?)"
+        },
+        "stale_scans": {
+          "runs": 5,
+          "p50_ms": 0.005,
+          "rows": 1,
+          "plan": "SEARCH scans USING COVERING INDEX idx_scans_status (status=?)"
+        },
+        "findings_by_scan_score": {
+          "runs": 5,
+          "p50_ms": 0.014,
+          "rows": 20,
+          "plan": "SEARCH findings USING COVERING INDEX idx_findings_scan_score (scan_id=?)"
+        },
+        "pending_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 0.008,
+          "rows": 6,
+          "plan": "SEARCH agent_steps USING COVERING INDEX idx_agent_steps_session_status_seq (session_id=? AND status=?)"
+        },
+        "all_agent_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 0.013,
+          "rows": 20,
+          "plan": "SEARCH agent_steps USING COVERING INDEX idx_agent_steps_session_seq (session_id=?)"
+        },
+        "chat_history": {
+          "runs": 5,
+          "p50_ms": 0.018,
+          "rows": 20,
+          "plan": "SEARCH chats USING INDEX idx_chats_scan_element_id_desc (scan_id=? AND element=?)"
+        },
+        "views_for_scan": {
+          "runs": 5,
+          "p50_ms": 0.011,
+          "rows": 20,
+          "plan": "SEARCH views USING COVERING INDEX idx_views_scan_id_desc (scan_id=?)"
+        },
+        "open_agent_sessions": {
+          "runs": 5,
+          "p50_ms": 0.012,
+          "rows": 10,
+          "plan": "SEARCH s USING INDEX idx_agent_sessions_status_id_desc (status=?) | SEARCH t USING INTEGER PRIMARY KEY (rowid=?) LEFT-JOIN"
+        },
+        "kb_refinement_lookup": {
+          "runs": 5,
+          "p50_ms": 0.006,
+          "rows": 1,
+          "plan": "SEARCH kb_refinements USING COVERING INDEX idx_kb_refinements_signature (cve_id=? AND part=? AND vendor=? AND product=? AND v_start=? AND v_end=?)"
+        }
+      }
+    },
+    {
+      "size": 10000,
+      "rows_equal": true,
+      "storage_before": {
+        "page_count": 1163,
+        "page_size_bytes": 4096,
+        "allocated_bytes": 4763648,
+        "free_pages": 0
+      },
+      "storage_after": {
+        "page_count": 1686,
+        "page_size_bytes": 4096,
+        "allocated_bytes": 6905856,
+        "free_pages": 0
+      },
+      "before": {
+        "scans_by_target": {
+          "runs": 5,
+          "p50_ms": 0.289,
+          "rows": 100,
+          "plan": "SCAN scans"
+        },
+        "last_done_scan": {
+          "runs": 5,
+          "p50_ms": 0.008,
+          "rows": 1,
+          "plan": "SCAN scans"
+        },
+        "stale_scans": {
+          "runs": 5,
+          "p50_ms": 0.341,
+          "rows": 10,
+          "plan": "SCAN scans"
+        },
+        "findings_by_scan_score": {
+          "runs": 5,
+          "p50_ms": 0.152,
+          "rows": 200,
+          "plan": "SEARCH findings USING INDEX idx_findings_scan (scan_id=?) | USE TEMP B-TREE FOR ORDER BY"
+        },
+        "pending_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 0.078,
+          "rows": 66,
+          "plan": "SEARCH agent_steps USING INDEX idx_agent_steps_session (session_id=?) | USE TEMP B-TREE FOR ORDER BY"
+        },
+        "all_agent_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 0.123,
+          "rows": 200,
+          "plan": "SEARCH agent_steps USING INDEX idx_agent_steps_session (session_id=?) | USE TEMP B-TREE FOR ORDER BY"
+        },
+        "chat_history": {
+          "runs": 5,
+          "p50_ms": 0.112,
+          "rows": 40,
+          "plan": "SCAN chats"
+        },
+        "views_for_scan": {
+          "runs": 5,
+          "p50_ms": 0.515,
+          "rows": 200,
+          "plan": "SCAN views"
+        },
+        "open_agent_sessions": {
+          "runs": 5,
+          "p50_ms": 0.23,
+          "rows": 50,
+          "plan": "SCAN s | SEARCH t USING INTEGER PRIMARY KEY (rowid=?) LEFT-JOIN"
+        },
+        "kb_refinement_lookup": {
+          "runs": 5,
+          "p50_ms": 0.322,
+          "rows": 1,
+          "plan": "SCAN kb_refinements"
+        }
+      },
+      "after": {
+        "scans_by_target": {
+          "runs": 5,
+          "p50_ms": 0.045,
+          "rows": 100,
+          "plan": "SEARCH scans USING COVERING INDEX idx_scans_target_id_desc (target_id=?)"
+        },
+        "last_done_scan": {
+          "runs": 5,
+          "p50_ms": 0.006,
+          "rows": 1,
+          "plan": "SEARCH scans USING INDEX idx_scans_target_id_desc (target_id=?)"
+        },
+        "stale_scans": {
+          "runs": 5,
+          "p50_ms": 0.008,
+          "rows": 10,
+          "plan": "SEARCH scans USING COVERING INDEX idx_scans_status (status=?)"
+        },
+        "findings_by_scan_score": {
+          "runs": 5,
+          "p50_ms": 0.088,
+          "rows": 200,
+          "plan": "SEARCH findings USING COVERING INDEX idx_findings_scan_score (scan_id=?)"
+        },
+        "pending_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 0.033,
+          "rows": 66,
+          "plan": "SEARCH agent_steps USING COVERING INDEX idx_agent_steps_session_status_seq (session_id=? AND status=?)"
+        },
+        "all_agent_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 0.086,
+          "rows": 200,
+          "plan": "SEARCH agent_steps USING COVERING INDEX idx_agent_steps_session_seq (session_id=?)"
+        },
+        "chat_history": {
+          "runs": 5,
+          "p50_ms": 0.03,
+          "rows": 40,
+          "plan": "SEARCH chats USING INDEX idx_chats_scan_element_id_desc (scan_id=? AND element=?)"
+        },
+        "views_for_scan": {
+          "runs": 5,
+          "p50_ms": 0.067,
+          "rows": 200,
+          "plan": "SEARCH views USING COVERING INDEX idx_views_scan_id_desc (scan_id=?)"
+        },
+        "open_agent_sessions": {
+          "runs": 5,
+          "p50_ms": 0.035,
+          "rows": 50,
+          "plan": "SEARCH s USING INDEX idx_agent_sessions_status_id_desc (status=?) | SEARCH t USING INTEGER PRIMARY KEY (rowid=?) LEFT-JOIN"
+        },
+        "kb_refinement_lookup": {
+          "runs": 5,
+          "p50_ms": 0.006,
+          "rows": 1,
+          "plan": "SEARCH kb_refinements USING COVERING INDEX idx_kb_refinements_signature (cve_id=? AND part=? AND vendor=? AND product=? AND v_start=? AND v_end=?)"
+        }
+      }
+    },
+    {
+      "size": 100000,
+      "rows_equal": true,
+      "storage_before": {
+        "page_count": 11864,
+        "page_size_bytes": 4096,
+        "allocated_bytes": 48594944,
+        "free_pages": 0
+      },
+      "storage_after": {
+        "page_count": 17421,
+        "page_size_bytes": 4096,
+        "allocated_bytes": 71356416,
+        "free_pages": 0
+      },
+      "before": {
+        "scans_by_target": {
+          "runs": 5,
+          "p50_ms": 3.302,
+          "rows": 1000,
+          "plan": "SCAN scans"
+        },
+        "last_done_scan": {
+          "runs": 5,
+          "p50_ms": 0.011,
+          "rows": 1,
+          "plan": "SCAN scans"
+        },
+        "stale_scans": {
+          "runs": 5,
+          "p50_ms": 3.843,
+          "rows": 100,
+          "plan": "SCAN scans"
+        },
+        "findings_by_scan_score": {
+          "runs": 5,
+          "p50_ms": 2.841,
+          "rows": 2000,
+          "plan": "SEARCH findings USING INDEX idx_findings_scan (scan_id=?) | USE TEMP B-TREE FOR ORDER BY"
+        },
+        "pending_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 1.941,
+          "rows": 666,
+          "plan": "SEARCH agent_steps USING INDEX idx_agent_steps_session (session_id=?) | USE TEMP B-TREE FOR ORDER BY"
+        },
+        "all_agent_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 2.923,
+          "rows": 2000,
+          "plan": "SEARCH agent_steps USING INDEX idx_agent_steps_session (session_id=?) | USE TEMP B-TREE FOR ORDER BY"
+        },
+        "chat_history": {
+          "runs": 5,
+          "p50_ms": 0.135,
+          "rows": 40,
+          "plan": "SCAN chats"
+        },
+        "views_for_scan": {
+          "runs": 5,
+          "p50_ms": 6.041,
+          "rows": 2000,
+          "plan": "SCAN views"
+        },
+        "open_agent_sessions": {
+          "runs": 5,
+          "p50_ms": 0.193,
+          "rows": 50,
+          "plan": "SCAN s | SEARCH t USING INTEGER PRIMARY KEY (rowid=?) LEFT-JOIN"
+        },
+        "kb_refinement_lookup": {
+          "runs": 5,
+          "p50_ms": 3.766,
+          "rows": 1,
+          "plan": "SCAN kb_refinements"
+        }
+      },
+      "after": {
+        "scans_by_target": {
+          "runs": 5,
+          "p50_ms": 0.485,
+          "rows": 1000,
+          "plan": "SEARCH scans USING COVERING INDEX idx_scans_target_id_desc (target_id=?)"
+        },
+        "last_done_scan": {
+          "runs": 5,
+          "p50_ms": 0.007,
+          "rows": 1,
+          "plan": "SEARCH scans USING INDEX idx_scans_target_id_desc (target_id=?)"
+        },
+        "stale_scans": {
+          "runs": 5,
+          "p50_ms": 0.037,
+          "rows": 100,
+          "plan": "SEARCH scans USING COVERING INDEX idx_scans_status (status=?)"
+        },
+        "findings_by_scan_score": {
+          "runs": 5,
+          "p50_ms": 1.093,
+          "rows": 2000,
+          "plan": "SEARCH findings USING COVERING INDEX idx_findings_scan_score (scan_id=?)"
+        },
+        "pending_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 0.332,
+          "rows": 666,
+          "plan": "SEARCH agent_steps USING COVERING INDEX idx_agent_steps_session_status_seq (session_id=? AND status=?)"
+        },
+        "all_agent_steps_by_sequence": {
+          "runs": 5,
+          "p50_ms": 1.077,
+          "rows": 2000,
+          "plan": "SEARCH agent_steps USING COVERING INDEX idx_agent_steps_session_seq (session_id=?)"
+        },
+        "chat_history": {
+          "runs": 5,
+          "p50_ms": 0.035,
+          "rows": 40,
+          "plan": "SEARCH chats USING INDEX idx_chats_scan_element_id_desc (scan_id=? AND element=?)"
+        },
+        "views_for_scan": {
+          "runs": 5,
+          "p50_ms": 0.828,
+          "rows": 2000,
+          "plan": "SEARCH views USING COVERING INDEX idx_views_scan_id_desc (scan_id=?)"
+        },
+        "open_agent_sessions": {
+          "runs": 5,
+          "p50_ms": 0.044,
+          "rows": 50,
+          "plan": "SEARCH s USING INDEX idx_agent_sessions_status_id_desc (status=?) | SEARCH t USING INTEGER PRIMARY KEY (rowid=?) LEFT-JOIN"
+        },
+        "kb_refinement_lookup": {
+          "runs": 5,
+          "p50_ms": 0.007,
+          "rows": 1,
+          "plan": "SEARCH kb_refinements USING COVERING INDEX idx_kb_refinements_signature (cve_id=? AND part=? AND vendor=? AND product=? AND v_start=? AND v_end=?)"
+        }
+      }
+    }
+  ]
+}

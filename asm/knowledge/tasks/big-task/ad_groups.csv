@@ -1,0 +1,17 @@
+source,relation,target,note
+svc_deploy,member,APP-Operators,
+APP-Operators,AddMember,HELPDESK-L1,делегировано право добавления участников
+HELPDESK-L1,member_of,HELPDESK-ADMINS,
+HELPDESK-ADMINS,AdminTo,dc01,локальный администратор на контроллере
+ops1,member,APP-Operators,
+helpdesk1,member,HELPDESK-L1,
+helpdesk2,member,HELPDESK-L1,
+svc_backup,member,BACKUP-OPS,
+BACKUP-OPS,AdminTo,app01,локальный администратор на app01
+app01,admin_session,t.lead,административная сессия на app01
+j.doe,member_of,DOMAIN-ADMINS,
+t.lead,member_of,DOMAIN-ADMINS,
+admin_da,member_of,DOMAIN-ADMINS,
+legacy_adm,member_of,DOMAIN-ADMINS,
+CONTOSO\contractor_svc,member_of,CONTOSO-VENDORS,
+CONTOSO-VENDORS,AdminTo,dc01,междоменное доверие подрядчика

@@ -1,0 +1,37 @@
+Manages controls who can invite guests to your directory to collaborate on resources secured by your Entra ID (Azure AD), such as SharePoint sites or Azure resources.
+
+CISA SCuBA 2.18: Only users with the Guest Inviter role SHOULD be able to invite guest users
+
+#### Test script
+```
+https://graph.microsoft.com/beta/policies/authorizationPolicy
+.allowInvitesFrom -in @('adminsAndGuestInviters','none')
+```
+
+
+
+#### Related links
+
+- [Open in Graph Explorer](https://developer.microsoft.com/graph/graph-explorer?request=policies/authorizationPolicy&method=GET&version=beta&GraphUrl=https://graph.microsoft.com)
+- [authorizationPolicy resource type - Microsoft Graph v1.0 | Microsoft Learn](https://learn.microsoft.com/graph/api/resources/authorizationpolicy)
+- [View in Microsoft Entra admin center](https://entra.microsoft.com/#view/Microsoft_AAD_IAM/AllowlistPolicyBlade)
+
+## MITRE ATT&CK
+
+```mermaid
+mindmap
+  root{{MITRE ATT&CK}}
+    (Tactic)
+      TA0003 - Persistence - Persistence
+    (Mitigation)
+
+    (Technique)
+
+```
+|Tactic|Technique|Mitigation|
+|---|---|---|
+|[TA0003 - Persistence - Persistence](https://attack.mitre.org/tactics/TA0003)|||
+
+
+<!--- Results --->
+%TestResult%

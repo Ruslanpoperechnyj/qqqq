@@ -1,0 +1,5 @@
+{
+  "chain": ["svc_deploy", "APP-Operators", "HELPDESK-L1", "HELPDESK-ADMINS", "dc01"],
+  "hops": 4,
+  "excluded_hints": ["svc_backup", "CONTOSO", "LSASS"]
+}

@@ -1,0 +1,439 @@
+#!/usr/bin/env bash
+# ============================================================================
+#  ASM: установка лучшего бесплатного арсенала ИБ (весь топ мира, бесплатно)
+# ============================================================================
+#  Ставит в каталог ASM_TOOLS_DIR (по умолчанию ~/.cache/asm-tools — вне
+#  папки проекта, чтобы не раздувать рабочий каталог; при желании укажите
+#  свой путь: ASM_TOOLS_DIR=/opt/asm-tools bash bin/install-tools.sh).
+#
+#  Состав (всё — свободные лицензии, статические сборки, без root):
+#    ProjectDiscovery : nuclei  (13 000+ проверок уязвимостей)
+#                       naabu   (порты), subfinder (поддомены),
+#                       httpx   (веб-проба и технологии), dnsx (DNS),
+#                       tlsx    (TLS-сертификаты и параметры), katana (обход ссылок)
+#    Прочие           : ffuf (поиск скрытых путей), gau (URL из архивов),
+#                       amass (глубокая разведка), testssl.sh (TLS-аудит)
+#    Данные           : словари SecLists (поддомены, каталоги)
+#    Библиотека       : libpcap (нужна naabu; распаковывается локально)
+#
+#  Запуск:  bash bin/install-tools.sh            (только отсутствующее)
+#           bash bin/install-tools.sh --force    (перекачать всё)
+#           bash bin/install-tools.sh --tools    (без словарей)
+# ============================================================================
+set -uo pipefail
+
+FORCE=0; SKIP_WORDS=0; FAST=0
+for a in "$@"; do
+  case "$a" in
+    --force) FORCE=1 ;;
+    --fast)  FAST=1 ;;      # только ядро (разведка, порты, проверки по шаблонам) — ~1,5 минуты
+    --tools) SKIP_WORDS=1 ;;
+  esac
+done
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+# Арсенал ставим в <проект>/build/tools: внутри проекта (значит, восстанавливается
+# той же командой), но под именем build — такие каталоги НЕ попадают в снимок
+# workspace. Иначе 13 742 шаблона и правила semgrep раздувают снимок до гигабайта.
+DIR="${ASM_TOOLS_DIR:-$ROOT/build/tools}"
+BIN="$DIR/bin"; LIB="$DIR/lib"; TPL="$DIR/nuclei-templates"; WL="$ROOT/data/wordlists"
+mkdir -p "$BIN" "$LIB" "$WL"
+
+case "$(uname -m)" in
+  x86_64)         ARCH=amd64 ;;
+  aarch64|arm64)  ARCH=arm64 ;;
+  *) echo "Неизвестная архитектура: $(uname -m)"; exit 1 ;;
+esac
+PLAT="$(uname -s | tr 'A-Z' 'a-z')"
+
+say()  { printf '%s\n' "$*"; }
+ok()   { printf '  \033[32m✓\033[0m %s\n' "$*"; }
+miss() { printf '  \033[33m·\033[0m %s\n' "$*"; }
+fail() { printf '  \033[31m✗\033[0m %s\n' "$*"; }
+
+# ---------------------------------------------------------------------------
+#  1. libpcap (naabu) — кладём локально, root не нужен
+# ---------------------------------------------------------------------------
+if [ ! -e "$LIB/libpcap.so.0.8" ]; then
+  say "== 1/5  Библиотека libpcap (для naabu)"
+  DEB_URL=""
+  for u in "http://deb.debian.org/debian/pool/main/libp/libpcap/libpcap0.8_1.10.3-1_amd64.deb" \
+           "http://deb.debian.org/debian/pool/main/libp/libpcap/libpcap0.8_1.10.5-2_amd64.deb"; do
+    [ "$PLAT" = "linux" ] || break
+    if curl -fsSL -m 60 "$u" -o /tmp/libpcap.deb 2>/dev/null; then DEB_URL="$u"; break; fi
+  done
+  if [ -n "$DEB_URL" ]; then
+    dpkg-deb -x /tmp/libpcap.deb /tmp/libpcap_x >/dev/null 2>&1 || true
+    so=$(find /tmp/libpcap_x -name 'libpcap.so.*' | head -1)
+    if [ -n "$so" ]; then
+      cp -f "$so" "$LIB/libpcap.so.0.8"
+      ok "libpcap: $(basename "$so") -> $LIB/libpcap.so.0.8"
+    else
+      fail "libpcap: не удалось распаковать (naabu будет недоступен)"
+    fi
+  else
+    miss "libpcap: зеркало недоступно (naabu будет недоступен; остальное работает)"
+  fi
+else
+  ok "libpcap уже есть"
+fi
+
+gh_asset() {  # gh_asset <repo> <regex> -> url
+  if [ -n "${GITHUB_TOKEN:-}" ]; then AUTH=(-H "Authorization: token $GITHUB_TOKEN"); else AUTH=(); fi
+  curl -fsSL -m 60 "${AUTH[@]}" "https://api.github.com/repos/$1/releases/latest" 2>/dev/null \
+    | grep -oE '"browser_download_url": *"[^"]+"' | cut -d'"' -f4 | grep -E "$2" | head -1
+}
+
+install_raw() {  # install_raw <name> <url> — бинарник без архива (osv-scanner)
+  local name="$1" url="$2"
+  [ -n "$url" ] || { fail "$name: ссылка не найдена"; return 1; }
+  curl -fsSL -m 300 "$url" -o "$BIN/$name" 2>/dev/null && chmod +x "$BIN/$name" \
+    && ok "$name: $("$BIN/$name" --version 2>/dev/null | head -1)" \
+    || fail "$name: не скачался"
+}
+
+install_zip() {  # install_zip <name> <url> <member>
+  local name="$1" url="$2" member="$3"
+  [ -n "$url" ] || { fail "$name: ссылка не найдена"; return 1; }
+  curl -fsSL -m 300 "$url" -o "/tmp/$name.dl" || { fail "$name: скачивание не удалось"; return 1; }
+  python3 - "/tmp/$name.dl" "$BIN" "$name" "$member" <<'PY'
+import os, sys, tarfile, zipfile
+src, dest, name, member = sys.argv[1:5]
+out = os.path.join(dest, name)
+if zipfile.is_zipfile(src):
+    with zipfile.ZipFile(src) as z:
+        names = z.namelist()
+        target = member if member in names else next(n for n in names if os.path.basename(n) == member)
+        with z.open(target) as f, open(out, "wb") as o:
+            o.write(f.read())
+else:
+    with tarfile.open(src) as t:
+        m = next(m for m in t.getmembers() if os.path.basename(m.name) == member)
+        with t.extractfile(m) as f, open(out, "wb") as o:
+            o.write(f.read())
+os.chmod(out, 0o755)
+PY
+  [ -s "$BIN/$name" ] && ok "$name: $(basename "$url")" || fail "$name: не распаковалось"
+}
+
+# ---------------------------------------------------------------------------
+#  2. ProjectDiscovery — основные движки
+# ---------------------------------------------------------------------------
+say "== 2/5  Движки ProjectDiscovery (проект: nuclei, naabu, subfinder, httpx, dnsx, tlsx, katana)"
+declare -A PD=( [nuclei]=nuclei [naabu]=naabu [subfinder]=subfinder [httpx]=httpx [dnsx]=dnsx [tlsx]=tlsx [katana]=katana )
+for tool in "${!PD[@]}"; do
+  [ "$FORCE" = "0" ] && [ -x "$BIN/$tool" ] && { ok "$tool уже установлен"; continue; }
+  url=$(gh_asset "projectdiscovery/$tool" "_${PLAT}_${ARCH}\.zip$")
+  install_zip "$tool" "$url" "$tool" || true
+done
+
+# ---------------------------------------------------------------------------
+#  3. Остальные звёзды открытого ИБ
+# ---------------------------------------------------------------------------
+say "== 3/5  Прочие инструменты (ffuf, gau, amass, testssl.sh)"
+if [ "$FORCE" = "1" ] || [ ! -x "$BIN/ffuf" ]; then
+  url=$(gh_asset "ffuf/ffuf" "ffuf_[0-9.]+_${PLAT}_${ARCH}\.tar\.gz$")
+  install_zip ffuf "$url" ffuf || true
+else ok "ffuf уже установлен"; fi
+
+if [ "$FORCE" = "1" ] || [ ! -x "$BIN/gau" ]; then
+  url=$(gh_asset "lc/gau" "${PLAT}_${ARCH}\.tar\.gz$")
+  install_zip gau "$url" gau || true
+else ok "gau уже установлен"; fi
+
+if [ "$FORCE" = "1" ] || [ ! -x "$BIN/amass" ]; then
+  url=$(gh_asset "owasp-amass/amass" "amass_${PLAT}_${ARCH}\.(zip|tar\.gz)$")
+  install_zip amass "$url" amass || true
+else ok "amass уже установлен"; fi
+
+if [ "$FAST" = "1" ]; then miss "nmap: пропущен в быстром режиме (доустановка: bash bin/install-tools.sh)"; elif [ "$FORCE" = "1" ] || [ ! -x "$BIN/nmap" ]; then
+  say "  · nmap: сборка из исходников (нужен gcc; ~1–2 минуты)"
+  NMAP_VER="${ASM_NMAP_VER:-v7.991}"
+  if [ "$PLAT" = "linux" ] && command -v gcc >/dev/null 2>&1; then
+    if curl -fsSL -m 600 "https://api.github.com/repos/nmap/nmap/tarball/refs/tags/${NMAP_VER}" -o /tmp/nmap-src.tar.gz; then
+      rm -rf /tmp/nmap-src && mkdir -p /tmp/nmap-src
+      tar xzf /tmp/nmap-src.tar.gz -C /tmp/nmap-src --strip-components=1
+      ( cd /tmp/nmap-src && ./configure --without-zenmap --without-ncat --without-ndiff --without-nping \
+          --prefix="$DIR" > /tmp/nmap-conf.log 2>&1 && make -j"$(nproc)" > /tmp/nmap-make.log 2>&1 \
+          && make install > /tmp/nmap-install.log 2>&1 )
+      [ -x "$BIN/nmap" ] && ok "nmap: $(LD_LIBRARY_PATH="$LIB" "$BIN/nmap" --version 2>/dev/null | head -1)" \
+                         || fail "nmap: сборка не удалась (см. /tmp/nmap-*.log)"
+    else
+      fail "nmap: исходники не скачались"
+    fi
+  else
+    miss "nmap: нужен gcc (пропускаем; порты закрывает naabu)"
+  fi
+else ok "nmap уже установлен"; fi
+
+# ---- perl-модуль XML::Writer: нужен nikto для отчёта в JSON -----------------
+# Отдельный шаг, а не часть установки nikto: раньше он выполнялся только при первой
+# распаковке nikto, и если модуль по какой-то причине не встал, больше никто его не проверял.
+if command -v perl >/dev/null 2>&1; then
+  if ! PERL5LIB="$DIR/perl-libs" perl -MXML::Writer -e 1 2>/dev/null; then
+    mkdir -p "$DIR/perl-libs/XML"
+    url=$(curl -fsSL -m 30 https://fastapi.metacpan.org/v1/release/XML-Writer 2>/dev/null \
+          | grep -oE '"download_url":"[^"]+"' | cut -d'"' -f4)
+    [ -n "$url" ] || url="https://cpan.metacpan.org/authors/id/J/JO/JOSEPHW/XML-Writer-0.900.tar.gz"
+    if curl -fsSL -m 60 "$url" -o /tmp/xmlw.tgz 2>/dev/null; then
+      rm -rf /tmp/xmlw && mkdir -p /tmp/xmlw
+      tar xzf /tmp/xmlw.tgz -C /tmp/xmlw --strip-components=1 2>/dev/null
+      # в архиве модуль лежит либо в lib/XML/Writer.pm, либо прямо в корне — берём любой
+      src=$(find /tmp/xmlw -name 'Writer.pm' 2>/dev/null | head -1)
+      if [ -n "$src" ]; then cp "$src" "$DIR/perl-libs/XML/Writer.pm"; fi
+      rm -rf /tmp/xmlw /tmp/xmlw.tgz
+    fi
+  fi
+  if PERL5LIB="$DIR/perl-libs" perl -MXML::Writer -e 1 2>/dev/null; then
+    ok "perl XML::Writer: на месте (нужен nikto для отчёта в JSON)"
+  else
+    miss "perl XML::Writer: не установился (вручную: cpan -T XML::Writer)"
+  fi
+else
+  miss "perl: не найден (nikto без него не работает)"
+fi
+
+# ---- nikto -------------------------------------------------------------------
+# Копия репозитория может оборваться на середине: тогда nikto.pl есть, а каталогов
+# plugins/ и databases/ нет — и nikto молча не работает. Поэтому проверяем ПОЛНОТУ.
+nikto_ok() { [ -x "$DIR/nikto/program/nikto.pl" ] && [ -d "$DIR/nikto/program/plugins" ] && [ -d "$DIR/nikto/program/databases" ]; }
+if [ "$FAST" = "1" ]; then miss "nikto: пропущен в быстром режиме (доустановка: bash bin/install-tools.sh)"
+elif [ "$FORCE" = "1" ] || ! nikto_ok; then
+  if command -v perl >/dev/null 2>&1; then
+    rm -rf "$DIR/nikto.part" /tmp/nikto-src /tmp/nikto.tgz
+    if git clone --depth 1 -q https://github.com/sullo/nikto.git "$DIR/nikto.part" 2>/dev/null \
+       && [ -d "$DIR/nikto.part/program/plugins" ] && [ -d "$DIR/nikto.part/program/databases" ]; then
+      rm -rf "$DIR/nikto" && mv "$DIR/nikto.part" "$DIR/nikto"
+    else
+      miss "nikto: копия репозитория неполная — беру архив"
+      rm -rf "$DIR/nikto.part"
+      mkdir -p /tmp/nikto-src
+      if curl -fsSL -m 120 https://codeload.github.com/sullo/nikto/tar.gz/refs/heads/master -o /tmp/nikto.tgz 2>/dev/null \
+         && tar xzf /tmp/nikto.tgz -C /tmp/nikto-src --strip-components=1 2>/dev/null \
+         && [ -d /tmp/nikto-src/program/databases ]; then
+        rm -rf "$DIR/nikto" && mkdir -p "$DIR/nikto" && cp -r /tmp/nikto-src/. "$DIR/nikto/"
+      fi
+      rm -rf /tmp/nikto-src /tmp/nikto.tgz
+    fi
+    if nikto_ok; then
+      ok "nikto: $(PERL5LIB="$DIR/perl-libs" perl "$DIR/nikto/program/nikto.pl" -Version 2>/dev/null | head -1)"
+    else
+      fail "nikto: не установился (нужны perl и сеть)"
+    fi
+  else
+    miss "nikto: нужен perl"
+  fi
+else ok "nikto уже установлен"; fi
+
+if [ "$FAST" = "1" ]; then miss "trivy: пропущен в быстром режиме (доустановка: bash bin/install-tools.sh)"; elif [ "$FORCE" = "1" ] || [ ! -x "$BIN/trivy" ]; then
+  url=$(gh_asset "aquasecurity/trivy" "trivy_[0-9.]+_Linux-64bit\.tar\.gz$")
+  install_zip trivy "$url" trivy || true
+else ok "trivy уже установлен"; fi
+
+if [ "$FAST" = "1" ]; then miss "trufflehog: пропущен в быстром режиме (доустановка: bash bin/install-tools.sh)"; elif [ "$FORCE" = "1" ] || [ ! -x "$BIN/trufflehog" ]; then
+  url=$(gh_asset "trufflesecurity/trufflehog" "trufflehog_[0-9.]+_${PLAT}_amd64\.tar\.gz$")
+  install_zip trufflehog "$url" trufflehog || true
+else ok "trufflehog уже установлен"; fi
+
+if [ "$FAST" = "1" ]; then miss "osv-scanner: пропущен в быстром режиме (доустановка: bash bin/install-tools.sh)"; elif [ "$FORCE" = "1" ] || [ ! -x "$BIN/osv-scanner" ]; then
+  url=$(gh_asset "google/osv-scanner" "osv-scanner_${PLAT}_amd64$")
+  install_raw osv-scanner "$url" || true
+else ok "osv-scanner уже установлен"; fi
+
+if [ "$FORCE" = "1" ] || [ ! -x "$BIN/gitleaks" ]; then
+  url=$(gh_asset "gitleaks/gitleaks" "gitleaks_[0-9.]+_${PLAT}_x64\.tar\.gz$")
+  install_zip gitleaks "$url" gitleaks || true
+else ok "gitleaks уже установлен"; fi
+
+# testssl.sh требует своё дерево (etc/ с картами шифров) + hexdump + резолвер (dig/host/nslookup)
+if [ "$FAST" = "1" ]; then miss "testssl.sh: пропущен в быстром режиме"; elif [ "$FORCE" = "1" ] || [ ! -x "$DIR/testssl/testssl.sh" ]; then
+  if curl -fsSL -m 300 "https://codeload.github.com/drwetter/testssl.sh/tar.gz/refs/tags/v3.2.0" \
+       -o /tmp/testssl.tgz 2>/dev/null; then
+    rm -rf /tmp/testssl-src && mkdir -p /tmp/testssl-src
+    tar xzf /tmp/testssl.tgz -C /tmp/testssl-src --strip-components=1
+    rm -rf "$DIR/testssl" && mkdir -p "$DIR/testssl"
+    cp -r /tmp/testssl-src/testssl.sh /tmp/testssl-src/etc /tmp/testssl-src/bin "$DIR/testssl/" 2>/dev/null
+    chmod +x "$DIR/testssl/testssl.sh"
+    cp "$DIR/testssl/testssl.sh" "$BIN/testssl.sh"      # чтобы движок находился по имени
+    ok "testssl.sh: $(grep -m1 -o 'version [0-9.]*' "$DIR/testssl/testssl.sh" || echo '3.2')"
+  else
+    miss "testssl.sh: не скачался (необязателен)"
+  fi
+else ok "testssl.sh уже установлен"; fi
+
+# hexdump — им пользуется testssl.sh; системного в контейнерах часто нет, ставим свою замену
+if [ "$FAST" = "1" ]; then miss "hexdump: пропущен в быстром режиме"; elif [ "$FORCE" = "1" ] || [ ! -x "$BIN/hexdump" ]; then
+  cp "$ROOT/bin/hexdump" "$BIN/hexdump" 2>/dev/null || miss "hexdump: нет файла bin/hexdump"
+  chmod +x "$BIN/hexdump" 2>/dev/null || true
+  [ -x "$BIN/hexdump" ] && ok "hexdump: совместимая замена для testssl.sh" || true
+else ok "hexdump уже есть"; fi
+
+# резолвер dig: testssl без него не стартует (распаковываем deb локально, без root)
+if [ "$FAST" = "1" ]; then miss "dig: пропущен в быстром режиме"; elif [ "$FORCE" = "1" ] || [ ! -x "$BIN/dig" ]; then
+  if command -v apt-get >/dev/null 2>&1; then
+    ( cd /tmp && rm -rf asm-dig && mkdir asm-dig && cd asm-dig
+      for p in bind9-dnsutils bind9-libs libuv1t64 libjemalloc2 liburcu8t64 libjson-c5 \
+               libprotobuf-c1 libfstrm0 liblmdb0 libnghttp2-14 libmaxminddb0 libgssapi-krb5-2; do
+        apt-get download "$p" >/dev/null 2>&1 || true
+      done
+      for f in *.deb; do [ -f "$f" ] && dpkg-deb -x "$f" root; done
+      # ВАЖНО: библиотеки резолвера держим отдельно (lib-dns), иначе через общий
+      # LD_LIBRARY_PATH они подменяют системные и ломают другие инструменты (semgrep).
+      mkdir -p "$DIR/lib-dns"
+      for b in dig host nslookup; do
+        [ -f "root/usr/bin/$b" ] || continue
+        cp "root/usr/bin/$b" "$BIN/$b.real" && chmod +x "$BIN/$b.real"
+        printf '#!/bin/sh\nLD_LIBRARY_PATH="%s" exec "%s" "$@"\n' "$DIR/lib-dns" "$BIN/$b.real" > "$BIN/$b"
+        chmod +x "$BIN/$b"
+      done
+      find root/usr/lib -name '*.so*' -exec cp -Pn {} "$DIR/lib-dns/" \; 2>/dev/null
+    ) >/dev/null 2>&1
+    LD_LIBRARY_PATH="$LIB" "$BIN/dig" +short example.com >/dev/null 2>&1 \
+      && ok "dig: локальная копия (нужна testssl.sh)" || miss "dig: не собрался (testssl может не запуститься)"
+  else
+    miss "dig: нет apt-get — testssl.sh не запустится"
+  fi
+else ok "dig уже есть"; fi
+
+# ---------------------------------------------------------------------------
+#  3б. Инструменты на Python: анализ кода и веб-приложений, поиск по смыслу
+say "== 3б/5  Python-инструменты (semgrep, wapiti, sqlite-vec)"
+if [ "$FAST" = "1" ]; then miss "python-инструменты: пропущены в быстром режиме"; else
+PYLIB="$DIR/pylibs"
+mkdir -p "$PYLIB"
+py_ok() { PYTHONPATH="$PYLIB" python3 -c "import $1" >/dev/null 2>&1; }
+
+if [ "$FORCE" = "1" ] || ! py_ok semgrep; then
+  pip install --quiet --disable-pip-version-check --target "$PYLIB" semgrep >/tmp/pip-semgrep.log 2>&1 \
+    && ok "semgrep: поставлен в проект" || miss "semgrep: pip не смог (см. /tmp/pip-semgrep.log)"
+else ok "semgrep уже установлен"; fi
+
+if [ "$FORCE" = "1" ] || ! py_ok wapitiCore; then
+  pip install --quiet --disable-pip-version-check --target "$PYLIB" wapiti3 >/tmp/pip-wapiti.log 2>&1 \
+    && ok "wapiti: поставлен в проект" || miss "wapiti: pip не смог (см. /tmp/pip-wapiti.log)"
+else ok "wapiti уже установлен"; fi
+
+if [ "$FORCE" = "1" ] || [ ! -d "$DIR/semgrep-rules/python" ]; then
+  rm -rf "$DIR/semgrep-rules"
+  git clone --depth 1 -q https://github.com/semgrep/semgrep-rules.git "$DIR/semgrep-rules" 2>/dev/null \
+    && ok "semgrep-rules: $(find "$DIR/semgrep-rules" -name '*.yaml' | wc -l | tr -d ' ') правил сообщества" \
+    || miss "semgrep-rules не скачались (semgrep будет брать облачный профиль p/security-audit)"
+else ok "semgrep-rules уже установлены"; fi
+
+# python-инструменты запускаем через обёртки в bin/: так движок находит их так же,
+# как остальные (и версия определяется, и PYTHONPATH всегда правильный)
+if py_ok wapitiCore; then
+  printf '#!/bin/sh\nexport PYTHONPATH="%s/pylibs${PYTHONPATH:+:$PYTHONPATH}"\nexec python3 -c "import sys; from wapitiCore.main.wapiti import wapiti_asyncio_wrapper as m; sys.exit(m())" "$@"\n' "$DIR" > "$BIN/wapiti"
+  chmod +x "$BIN/wapiti"
+  ok "wapiti: обёртка в каталоге арсенала"
+fi
+if py_ok semgrep; then
+  # у semgrep нативный лаунчер ищет рядом pysemgrep: даём ему и путь, и PYTHONPATH
+  printf '#!/bin/sh\nexport PYTHONPATH="%s/pylibs${PYTHONPATH:+:$PYTHONPATH}"\nexport PATH="%s/pylibs/bin:$PATH"\nexec python3 "%s/pylibs/bin/pysemgrep" "$@"\n' "$DIR" "$DIR" "$DIR" > "$BIN/semgrep"
+  chmod +x "$BIN/semgrep"
+  ok "semgrep: обёртка в каталоге арсенала"
+fi
+
+if [ "$FORCE" = "1" ] || ! py_ok sqlite_vec; then
+  pip install --quiet --disable-pip-version-check --target "$PYLIB" sqlite-vec >/tmp/pip-vec.log 2>&1 \
+    && ok "sqlite-vec: поиск по смыслу на векторах" || miss "sqlite-vec: pip не смог"
+else ok "sqlite-vec уже установлен"; fi
+
+# модель для смыслового поиска (~0,5 ГБ) — только по явному желанию: ASM_WITH_MODEL=1
+if [ "${ASM_WITH_MODEL:-0}" = "1" ]; then
+  if py_ok fastembed; then ok "модель смыслового поиска уже есть"
+  else pip install --quiet --disable-pip-version-check --target "$PYLIB" fastembed >/tmp/pip-embed.log 2>&1 \
+       && ok "fastembed: локальная модель (0,5 ГБ)" || miss "fastembed: pip не смог"; fi
+fi
+
+fi
+
+# ---------------------------------------------------------------------------
+#  4. Nuclei-шаблоны (13 000+ проверок)
+# ---------------------------------------------------------------------------
+say "== 4/5  Шаблоны проверок nuclei"
+# порог высокий намеренно: частично распакованный набор (обрыв загрузки) должен перекачиваться,
+# иначе в проверках молча не хватает тысяч шаблонов
+if [ -d "$TPL" ] && [ "$(find "$TPL" -name '*.yaml' 2>/dev/null | wc -l)" -gt 12000 ] && [ "$FORCE" = "0" ]; then
+  ok "шаблонов уже установлено: $(find "$TPL" -name '*.yaml' | wc -l | tr -d ' ')"
+else
+  tag=$(curl -fsSL -m 60 https://api.github.com/repos/projectdiscovery/nuclei-templates/releases/latest \
+        | grep -oE '"tag_name": *"[^"]+"' | cut -d'"' -f4)
+  url="https://github.com/projectdiscovery/nuclei-templates/archive/refs/tags/${tag}.zip"
+  if [ -n "$tag" ] && curl -fsSL -m 600 "$url" -o /tmp/tpl.zip; then
+    rm -rf /tmp/tplx && mkdir -p /tmp/tplx
+    python3 - <<'PY'
+import zipfile
+with zipfile.ZipFile("/tmp/tpl.zip") as z: z.extractall("/tmp/tplx")
+PY
+    src=$(find /tmp/tplx -maxdepth 1 -type d -name 'nuclei-templates-*' | head -1)
+    if [ -n "$src" ]; then
+      rm -rf "$TPL" && mv "$src" "$TPL"
+      ok "шаблоны $tag: $(find "$TPL" -name '*.yaml' | wc -l | tr -d ' ') файлов"
+    else
+      fail "шаблоны: архив не распознан"
+    fi
+  else
+    fail "шаблоны: не скачались"
+  fi
+fi
+
+# ---------------------------------------------------------------------------
+#  5. Словари (SecLists: поддомены и каталоги) — маленькие, лежат в проекте
+# ---------------------------------------------------------------------------
+say "== 5/5  Словари"
+if [ "$SKIP_WORDS" = "0" ]; then
+  get_words() {  # get_words <url> <файл>
+    if [ -s "$WL/$2" ]; then ok "$2: $(wc -l < "$WL/$2" | tr -d ' ') строк"; return; fi
+    if curl -fsSL -m 240 "$1" -o "$WL/$2" 2>/dev/null; then
+      ok "$2: $(wc -l < "$WL/$2" | tr -d ' ') строк"
+    else fail "$2: не скачался"; fi
+  }
+  get_words "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-110000.txt" "subdomains-110k.txt"
+  get_words "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/DNS/subdomains-top1million-20000.txt"  "subdomains-20k.txt"
+  get_words "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/common.txt"                    "dirs-common.txt"
+  get_words "https://raw.githubusercontent.com/danielmiessler/SecLists/master/Discovery/Web-Content/raft-small-words.txt"          "dirs-small.txt"
+else
+  miss "словари пропущены (--tools)"
+fi
+
+# ---------------------------------------------------------------------------
+#  Итог
+# ---------------------------------------------------------------------------
+cat > "$DIR/env.sh" <<EOF
+# Подключение арсенала ASM:  source $DIR/env.sh
+export ASM_TOOLS_DIR="$DIR"
+export PDCP_DIR="$DIR/pdcp"        # служебный кэш ProjectDiscovery — тоже в проект, а не в домашний каталог
+export PYTHONPATH="$DIR/pylibs${PYTHONPATH:+:$PYTHONPATH}"
+export PATH="$BIN:\$PATH"
+export LD_LIBRARY_PATH="$LIB:\${LD_LIBRARY_PATH:-}"
+export ASM_NAABU_BIN="$BIN/naabu"
+export ASM_NUCLEI_BIN="$BIN/nuclei"
+export ASM_NUCLEI_TEMPLATES="$TPL"
+export ASM_SUBFINDER_BIN="$BIN/subfinder"
+export ASM_HTTPX_BIN="$BIN/httpx"
+export ASM_DNSX_BIN="$BIN/dnsx"
+export ASM_TLSX_BIN="$BIN/tlsx"
+export ASM_KATANA_BIN="$BIN/katana"
+export ASM_FFUF_BIN="$BIN/ffuf"
+export ASM_GAU_BIN="$BIN/gau"
+export ASM_AMASS_BIN="$BIN/amass"
+export ASM_TESTSSL_BIN="$BIN/testssl.sh"
+export ASM_WORDLISTS="$WL"
+export ASM_NMAP_BIN="$BIN/nmap"
+export ASM_TRIVY_BIN="$BIN/trivy"
+export ASM_GITLEAKS_BIN="$BIN/gitleaks"
+export ASM_TRUFFLEHOG_BIN="$BIN/trufflehog"
+export ASM_OSV_BIN="$BIN/osv-scanner"
+# nikto лежит внутри своего каталога (program/nikto.pl) — движок находит его сам
+EOF
+
+say ""
+say "== Готово. Проверка =="
+for t in nuclei naabu subfinder httpx dnsx tlsx katana ffuf gau amass nmap trivy gitleaks trufflehog osv-scanner semgrep wapiti testssl.sh; do
+  if [ -x "$BIN/$t" ]; then printf '  %-14s %s\n' "$t" "$(LD_LIBRARY_PATH="$LIB" "$BIN/$t" -version 2>/dev/null | head -1 || echo 'есть')";
+  else printf '  %-14s \033[31mнет\033[0m\n' "$t"; fi
+done
+say ""
+say "Подключить в текущей оболочке:  source $DIR/env.sh"
+say "Панель ASM сама найдёт движки в $BIN (ничего экспортировать не нужно)."

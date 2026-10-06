@@ -1,0 +1,361 @@
+{
+  "label": "batched",
+  "generated_at": "2026-10-05T17:37:19+00:00",
+  "python": "3.13.14",
+  "sqlite": "3.46.1",
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "database": "fresh SQLite file per run in a removed TemporaryDirectory",
+  "fts5_available": true,
+  "sizes": {
+    "1000": {
+      "assets": {
+        "runs": 3,
+        "p50_ms": 7.437,
+        "p95_ms_nearest_rank": 7.618,
+        "commit_counts": [
+          1
+        ]
+      },
+      "edges": {
+        "runs": 3,
+        "p50_ms": 8.314,
+        "p95_ms_nearest_rank": 8.845,
+        "commit_counts": [
+          1
+        ]
+      },
+      "findings": {
+        "runs": 3,
+        "p50_ms": 25.904,
+        "p95_ms_nearest_rank": 43.398,
+        "commit_counts": [
+          1
+        ]
+      }
+    },
+    "10000": {
+      "assets": {
+        "runs": 3,
+        "p50_ms": 73.512,
+        "p95_ms_nearest_rank": 98.638,
+        "commit_counts": [
+          1
+        ]
+      },
+      "edges": {
+        "runs": 3,
+        "p50_ms": 74.994,
+        "p95_ms_nearest_rank": 75.009,
+        "commit_counts": [
+          1
+        ]
+      },
+      "findings": {
+        "runs": 3,
+        "p50_ms": 249.876,
+        "p95_ms_nearest_rank": 250.934,
+        "commit_counts": [
+          1
+        ]
+      }
+    },
+    "100000": {
+      "assets": {
+        "runs": 3,
+        "p50_ms": 752.111,
+        "p95_ms_nearest_rank": 752.286,
+        "commit_counts": [
+          1
+        ]
+      },
+      "edges": {
+        "runs": 3,
+        "p50_ms": 772.641,
+        "p95_ms_nearest_rank": 826.134,
+        "commit_counts": [
+          1
+        ]
+      },
+      "findings": {
+        "runs": 3,
+        "p50_ms": 2652.151,
+        "p95_ms_nearest_rank": 2691.906,
+        "commit_counts": [
+          1
+        ]
+      }
+    }
+  },
+  "samples": [
+    {
+      "label": "batched",
+      "size": 1000,
+      "repeat": 1,
+      "api": "assets",
+      "seconds": 0.007618468999680772,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 1000,
+      "repeat": 1,
+      "api": "edges",
+      "seconds": 0.007614201999786019,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 1000,
+      "repeat": 1,
+      "api": "findings",
+      "seconds": 0.025337269000374363,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": true
+    },
+    {
+      "label": "batched",
+      "size": 1000,
+      "repeat": 2,
+      "api": "assets",
+      "seconds": 0.0074367470006109215,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 1000,
+      "repeat": 2,
+      "api": "edges",
+      "seconds": 0.008844746999784547,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 1000,
+      "repeat": 2,
+      "api": "findings",
+      "seconds": 0.025904322999849683,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": true
+    },
+    {
+      "label": "batched",
+      "size": 1000,
+      "repeat": 3,
+      "api": "assets",
+      "seconds": 0.007372047999524511,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 1000,
+      "repeat": 3,
+      "api": "edges",
+      "seconds": 0.008314245999827108,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 1000,
+      "repeat": 3,
+      "api": "findings",
+      "seconds": 0.04339773099945887,
+      "commits": 1,
+      "rows": 1000,
+      "fts5": true
+    },
+    {
+      "label": "batched",
+      "size": 10000,
+      "repeat": 1,
+      "api": "assets",
+      "seconds": 0.0986383739991652,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 10000,
+      "repeat": 1,
+      "api": "edges",
+      "seconds": 0.0750090720002845,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 10000,
+      "repeat": 1,
+      "api": "findings",
+      "seconds": 0.25093436800034397,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": true
+    },
+    {
+      "label": "batched",
+      "size": 10000,
+      "repeat": 2,
+      "api": "assets",
+      "seconds": 0.07351232899964089,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 10000,
+      "repeat": 2,
+      "api": "edges",
+      "seconds": 0.07499352300055762,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 10000,
+      "repeat": 2,
+      "api": "findings",
+      "seconds": 0.24899507200007065,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": true
+    },
+    {
+      "label": "batched",
+      "size": 10000,
+      "repeat": 3,
+      "api": "assets",
+      "seconds": 0.07345513499967637,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 10000,
+      "repeat": 3,
+      "api": "edges",
+      "seconds": 0.07446104399969045,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 10000,
+      "repeat": 3,
+      "api": "findings",
+      "seconds": 0.24987594699996407,
+      "commits": 1,
+      "rows": 10000,
+      "fts5": true
+    },
+    {
+      "label": "batched",
+      "size": 100000,
+      "repeat": 1,
+      "api": "assets",
+      "seconds": 0.7521108420005476,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 100000,
+      "repeat": 1,
+      "api": "edges",
+      "seconds": 0.7726406080000743,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 100000,
+      "repeat": 1,
+      "api": "findings",
+      "seconds": 2.652151430000231,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": true
+    },
+    {
+      "label": "batched",
+      "size": 100000,
+      "repeat": 2,
+      "api": "assets",
+      "seconds": 0.7442228039999463,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 100000,
+      "repeat": 2,
+      "api": "edges",
+      "seconds": 0.8261342499999955,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 100000,
+      "repeat": 2,
+      "api": "findings",
+      "seconds": 2.6427103679998254,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": true
+    },
+    {
+      "label": "batched",
+      "size": 100000,
+      "repeat": 3,
+      "api": "assets",
+      "seconds": 0.7522858539996378,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 100000,
+      "repeat": 3,
+      "api": "edges",
+      "seconds": 0.7609243769993554,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": null
+    },
+    {
+      "label": "batched",
+      "size": 100000,
+      "repeat": 3,
+      "api": "findings",
+      "seconds": 2.6919057279992558,
+      "commits": 1,
+      "rows": 100000,
+      "fts5": true
+    }
+  ]
+}

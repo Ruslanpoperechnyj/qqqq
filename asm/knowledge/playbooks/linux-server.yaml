@@ -1,0 +1,52 @@
+# Точка входа со стороны Linux-сервера.
+
+- id: linux-ssh-exposed
+  title: SSH наружу
+  note: Сам по себе не находка — но версия OpenSSH задаёт всю дальнейшую цепочку.
+  match:
+    port: 22
+    banner: ssh
+  steps:
+    - action: enum_services
+      why: точная версия OpenSSH — по ней отсекается большинство CVE
+    - action: check_vulns
+      why: шаблоны на regreSSHion и подобные
+    - action: probe_tls
+      why: если рядом есть TLS — снять сертификат, он часто выдаёт внутреннее имя
+
+- id: linux-web-exposed
+  title: Веб-сервис наружу
+  match:
+    port: [80, 443, 8080, 8443]
+  steps:
+    - action: probe_http
+      why: заголовки, титул, следы фреймворка
+    - action: probe_tls
+      why: SAN сертификата — часто это весь внутренний периметр сразу
+    - action: probe_testssl
+      why: аудит конфигурации TLS, это отдельная находка
+    - action: crawl_links
+      why: параметры и скрытые разделы
+    - action: enum_paths
+      why: открытые .git, .env, резервные копии
+    - action: check_webserver
+      why: опасные файлы и конфигурация
+    - action: check_webapp
+      why: проверки приложения
+    - action: check_vulns
+      why: шаблоны под опознанный стек
+
+- id: linux-exotic-port
+  title: Нестандартный порт с веб-интерфейсом
+  note: Панели управления (cPanel, Portainer, Jenkins, GitLab) любят нестандартные порты.
+  match:
+    banner: [http, nginx, apache, jetty, gunicorn, werkzeug]
+  steps:
+    - action: probe_http
+      why: опознать панель по заголовкам и титулу
+    - action: probe_tls
+      why: сертификат панели
+    - action: enum_paths
+      why: стандартные пути панелей и открытые артефакты
+    - action: check_vulns
+      why: шаблоны под конкретную панель

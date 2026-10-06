@@ -1,0 +1,61 @@
+# Точка входа со стороны Windows / Active Directory.
+# Шаги — только из каталога агента. handoff_access здесь запрещён намеренно:
+# получение доступа всегда решает оператор, не шаблон.
+
+- id: win-rdp-exposed
+  title: RDP наружу
+  note: RDP на внешнем интерфейсе — это и точка входа, и находка сама по себе.
+  match:
+    port: 3389
+  steps:
+    - action: enum_services
+      why: снять точную версию и сборку — по ним подбираются CVE
+    - action: check_vulns
+      why: шаблоны на BlueKeep и родственные
+    - action: check_webserver
+      why: сопутствующие опасные файлы рядом с службой
+
+- id: win-winrm-exposed
+  title: WinRM / WS-Management наружу
+  note: 5985/5986 почти всегда значит, что где-то рядом учётные данные.
+  match:
+    port: [5985, 5986]
+  steps:
+    - action: enum_services
+      why: подтвердить, что это именно WinRM, а не другой HTTP-сервис
+    - action: probe_http
+      why: заголовки и поведение на анонимный запрос
+    - action: check_vulns
+      why: шаблоны на доступ без проверки учётных данных
+
+- id: win-smb-exposed
+  title: SMB наружу
+  note: 445 наружу — классическая находка; проверка только на чтение.
+  match:
+    port: 445
+  steps:
+    - action: enum_services
+      why: версия SMB и имя хоста из ответа
+    - action: check_vulns
+      why: шаблоны на анонимный доступ к общим ресурсам
+
+- id: win-ad-ldap-exposed
+  title: LDAP / глобальный каталог наружу
+  note: 389/636/3268 наружу даёт перечисление домена без единого пакета перебора.
+  match:
+    port: [389, 636, 3268, 3269]
+  steps:
+    - action: enum_services
+      why: подтвердить каталог и снять имя домена
+    - action: check_vulns
+      why: шаблоны на анонимное связывание и чтение корневого DSE
+
+- id: win-mssql-exposed
+  title: MS SQL наружу
+  match:
+    port: 1433
+  steps:
+    - action: enum_services
+      why: версия и наличие Named Pipes
+    - action: check_vulns
+      why: шаблоны на пустой пароль sa и известные CVE

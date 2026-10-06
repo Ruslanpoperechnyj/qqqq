@@ -1,0 +1,35 @@
+candidate,source_kind,title,url,validated_takeaway,evidence
+Monkey365,repository,Upstream repository,https://github.com/silverhack/monkey365,"PowerShell security assessment framework for M365/Entra/Azure; Apache-2.0; bundled runtime dependencies claimed; latest visible commit 2026-09-28",primary
+Monkey365,release,Release v1.0.0,https://github.com/silverhack/monkey365/releases/tag/v1.0.0,"Published 2026-09-25; dedicated Entra ruleset with 100+ checks claimed",primary
+Monkey365,permissions,Required permissions docs,https://silverhack.github.io/monkey365/getting_started/permissions/,"Workload-specific authentication and permission selection; exact minimum scopes remain unaudited",primary-docs
+Monkey365,license,LICENSE,https://github.com/silverhack/monkey365/blob/main/LICENSE,"Apache-2.0",primary
+ScubaGear,repository,CISA upstream repository,https://github.com/cisagov/ScubaGear,"M365 assessments against CISA SCuBA baselines; active repository",primary
+ScubaGear,release,Release v1.8.0,https://github.com/cisagov/ScubaGear/releases/tag/v1.8.0,"Published 2026-05-07",primary
+ScubaGear,permissions,Noninteractive permissions,https://github.com/cisagov/ScubaGear/blob/main/docs/prerequisites/noninteractive.md,"SharePoint Sites.FullControl.All; Power Platform registration; Power BI tenant setting; project says write-named permissions are not used by ScubaGear itself",primary-docs
+ScubaGear,license,LICENSE,https://github.com/cisagov/ScubaGear/blob/main/LICENSE,"CC0 1.0 Universal",primary
+Cartography,repository,Upstream repository,https://github.com/cartography-cncf/cartography,"Infrastructure assets and relationships are written to a Neo4j graph; supports major CSPs and Entra per README",primary
+Cartography,release,Release 0.141.0,https://github.com/cartography-cncf/cartography/releases/tag/0.141.0,"Published 2026-09-01; recent changes include AWS/GCP/ontology modules",primary
+Cartography,package-metadata,PyPI 0.141.0,https://pypi.org/project/cartography/0.141.0/,"Version 0.141.0; Apache-2.0",primary
+Cartography,permissions,Supported cloud inventory/permission relationships,https://github.com/cartography-cncf/cartography/blob/master/cartography/data/permission_relationships.yaml,"Permission relationship documentation includes secret-access capabilities; not proof of secret-payload retrieval",primary-docs
+Steampipe,FAQ,Official FAQ,https://steampipe.io/docs/faq/overview,"Read-only SQL interface claim; API results ephemeral and cached 5 minutes by default; WSL2 2.0 supported; arbitrary exec plugin exists",primary-docs
+Steampipe,release,Release v2.4.7,https://github.com/turbot/steampipe/releases/tag/v2.4.7,"Latest checked stable release published 2026-09-16",primary
+Steampipe,license,LICENSE,https://github.com/turbot/steampipe/blob/main/LICENSE,"AGPL-3.0",primary
+Powerpipe,docs,Powerpipe overview,https://steampipe.io/docs/pipes-ecosystem/powerpipe,"Local dashboards and security/compliance benchmarks using Steampipe; prebuilt mods cover AWS/Azure/GCP and more",primary-docs
+Powerpipe,release,Release v1.5.5,https://github.com/turbot/powerpipe/releases/tag/v1.5.5,"Latest checked stable release published 2026-09-16",primary
+Powerpipe,license,LICENSE,https://github.com/turbot/powerpipe/blob/develop/LICENSE,"AGPL-3.0",primary
+CloudSplaining,package,PyPI project,https://pypi.org/project/cloudsplaining/,"0.9.1 published 2026-06-14; local single policy-file analysis documented; PyPI license metadata says MIT",primary
+CloudSplaining,repository,Salesforce upstream,https://github.com/salesforce/cloudsplaining,"Upstream actively maintained; visible commit 2026-10-03",primary
+CloudSplaining,release,Release 0.9.1,https://github.com/salesforce/cloudsplaining/releases/tag/0.9.1,"Official upstream release published 2026-06-14",primary
+CloudSplaining,license,Upstream LICENSE,https://github.com/salesforce/cloudsplaining/blob/master/LICENSE,"BSD 3-Clause; conflicts with PyPI and pyproject MIT metadata",primary
+CloudSplaining,metadata,Upstream pyproject.toml,https://github.com/salesforce/cloudsplaining/blob/master/pyproject.toml,"Declares MIT while LICENSE file states BSD 3-Clause",primary
+CloudSplaining,excluded-fork,Stale devops-made-easy fork,https://github.com/devops-made-easy/cloudsplaining,"Fork from Salesforce upstream; latest visible commit 2021-04-14; do not use as canonical source",primary
+CloudFox,repository,Upstream README,https://github.com/BishopFox/cloudfox,"Official README explicitly describes secrets in EC2 user-data/service environment variables; current README lists AWS/Azure command counts",primary
+CloudFox,wiki,Official command wiki,https://github.com/BishopFox/cloudfox/wiki,"AWS modules include secrets, env-vars and all-checks; docs describe loot/output with sensitive data; maturity/support matrix varies by cloud",primary-docs
+CloudFox,release,Releases,https://github.com/BishopFox/cloudfox/releases,"Latest checked release v2.0.5 dated 2026-05-26",primary
+CloudFox,license,LICENSE,https://github.com/BishopFox/cloudfox/blob/main/LICENSE,"MIT",primary
+BBOT,repository,Upstream repository,https://github.com/blacklanternsecurity/bbot,"Recursive internet scanning framework with many modules and output connectors",primary
+BBOT,package,PyPI 3.0.2,https://pypi.org/project/bbot/,"Version 3.0.2 published 2026-08-24; AGPL-3.0",primary
+BBOT,release,Release history,https://github.com/blacklanternsecurity/bbot/releases,"Official release history; source reviewed only at overview level",primary
+Checkov,release,Release 3.3.21,https://github.com/bridgecrewio/checkov/releases/tag/3.3.21,"Published 2026-09-30",primary
+Checkov,package,PyPI package metadata,https://pypi.org/project/checkov/,"Apache License 2.0 metadata",primary
+Checkov,policy-depth,Graph policies overview,https://www.paloaltonetworks.com/blog/cloud-security/checkov-upgrade-iac-security/,"Vendor describes Checkov graph-based cross-resource policies; validate incremental coverage versus existing Trivy before adoption",vendor-docs

@@ -1,0 +1,1496 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ASM — анализ внешнего периметра</title>
+<script src="/vendor/cytoscape.min.js"></script>
+<style>
+  :root{
+    --bg:#0b0f14; --bg2:#111823; --bg3:#161f2c; --line:#233043; --tx:#e6edf5; --tx2:#93a4b8;
+    --acc:#3fa9f5; --p0:#ff4d4d; --p1:#ff9f43; --p2:#ffd93d; --p3:#57d9a3; --ok:#57d9a3;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+  a{color:var(--acc)}
+  header{display:flex;align-items:center;gap:14px;padding:12px 18px;background:var(--bg2);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:5}
+  header h1{font-size:15px;margin:0;font-weight:600;letter-spacing:.2px}
+  .badge{font-size:11px;padding:3px 8px;border-radius:20px;background:#1d2b3d;color:var(--tx2);border:1px solid var(--line)}
+  .badge.warn{background:#2b1d1d;color:#ffb3b3;border-color:#4a2a2a}
+  .layout{display:grid;grid-template-columns:290px 1fr;min-height:calc(100vh - 53px)}
+  aside{background:var(--bg2);border-right:1px solid var(--line);padding:14px;overflow:auto;max-height:calc(100vh - 53px)}
+  main{padding:18px;overflow:auto;max-height:calc(100vh - 53px)}
+  .btn{background:var(--acc);color:#04121e;border:0;padding:8px 13px;border-radius:7px;font-weight:600;cursor:pointer;font-size:13px}
+  .btn:hover{filter:brightness(1.1)}
+  .btn.sec{background:var(--bg3);color:var(--tx);border:1px solid var(--line);font-weight:500}
+  .btn.sm{padding:4px 9px;font-size:12px}
+  .btn:disabled{opacity:.5;cursor:not-allowed}
+  input,select,textarea{width:100%;background:var(--bg);border:1px solid var(--line);color:var(--tx);border-radius:7px;padding:8px;font:inherit;margin:3px 0 9px}
+  label{font-size:12px;color:var(--tx2);display:block;margin-top:6px}
+  .card{background:var(--bg2);border:1px solid var(--line);border-radius:11px;padding:15px;margin-bottom:14px}
+  .card h2{margin:0 0 10px;font-size:14px;font-weight:600;color:var(--tx)}
+  .tile{display:inline-block;background:var(--bg3);border:1px solid var(--line);border-radius:10px;padding:11px 15px;margin:0 9px 9px 0;min-width:104px}
+  .tile b{display:block;font-size:21px;font-weight:700}
+  .tile span{font-size:11px;color:var(--tx2)}
+  .t-p0 b{color:var(--p0)}.t-p1 b{color:var(--p1)}.t-p2 b{color:var(--p2)}.t-p3 b{color:var(--p3)}
+  table{width:100%;border-collapse:collapse;font-size:13px}
+  th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{color:var(--tx2);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.4px}
+  tr:hover td{background:#131c28}
+  .pill{display:inline-block;padding:1px 7px;border-radius:20px;font-size:11px;font-weight:700}
+  .pill.P0{background:var(--p0);color:#fff}.pill.P1{background:var(--p1);color:#22160a}
+  .pill.P2{background:var(--p2);color:#221f0a}.pill.P3{background:var(--p3);color:#04241a}
+  .tag{display:inline-block;background:var(--bg3);border:1px solid var(--line);border-radius:6px;padding:1px 6px;font-size:11px;color:var(--tx2);margin:1px}
+  .tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+  .tabs button{background:var(--bg3);border:1px solid var(--line);color:var(--tx2);padding:6px 12px;border-radius:7px;cursor:pointer;font-size:13px}
+  .tabs button.on{background:var(--acc);color:#04121e;border-color:var(--acc);font-weight:600}
+  pre{background:#060a0f;border:1px solid var(--line);border-radius:9px;padding:12px;overflow:auto;font-size:12px;max-height:420px;white-space:pre-wrap}
+  .muted{color:var(--tx2)}
+  .row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .grow{flex:1}
+  .tgt{padding:9px 10px;border:1px solid var(--line);border-radius:9px;margin-bottom:8px;cursor:pointer;background:var(--bg3)}
+  .tgt:hover{border-color:var(--acc)}
+  .tgt.on{border-color:var(--acc);box-shadow:0 0 0 1px var(--acc) inset}
+  .tgt b{font-size:13px}
+  .small{font-size:11.5px;color:var(--tx2)}
+  .prog{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;margin:9px 0}
+  .prog i{display:block;height:100%;width:30%;background:var(--acc);animation:sl 1.3s infinite ease-in-out}
+  @keyframes sl{0%{margin-left:-30%}100%{margin-left:100%}}
+  .drawer{position:fixed;top:0;right:-560px;width:540px;max-width:96vw;height:100vh;background:#0d1218;
+    border-left:1px solid var(--line);box-shadow:-24px 0 60px rgba(0,0,0,.55);transition:right .18s ease;
+    z-index:50;display:flex;flex-direction:column}
+  .drawer.on{right:0}
+  .drawer h3{margin:0 0 4px;font-size:15px}
+  .dhead{padding:14px 16px;border-bottom:1px solid var(--line);display:flex;gap:10px;align-items:flex-start}
+  .dbody{padding:14px 16px 20px;overflow:auto;flex:1}
+  .chat{border-top:1px solid var(--line);padding:12px 16px 14px;background:#0b1015}
+  .chatlog{max-height:270px;overflow:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:9px}
+  .msg{padding:8px 11px;border-radius:9px;font-size:12.5px;line-height:1.5;white-space:pre-wrap;word-break:break-word}
+  .msg.u{background:#152232;align-self:flex-end;max-width:88%}
+  .msg.a{background:#0f1b16;border:1px solid #1d3529;max-width:96%}
+  .msg.s{background:none;color:var(--mut);font-size:11.5px;padding:0}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .chip{border:1px solid var(--line);background:#111820;color:#cfe3f5;border-radius:14px;padding:4px 10px;
+    font-size:11.5px;cursor:pointer}
+  .chip:hover{border-color:#2b6cb0}
+  .stat{display:inline-flex;gap:5px;flex-wrap:wrap;margin:6px 0 2px}
+  .statb{border:1px solid var(--line);background:#111820;color:#cfe3f5;border-radius:7px;padding:2px 8px;
+    font-size:11px;cursor:pointer}
+  .statb:hover{border-color:var(--acc)}
+  .statb.on{background:#152232;border-color:var(--acc)}
+  .stbadge{font-size:10.5px;padding:1px 6px;border-radius:5px;border:1px solid var(--line);color:var(--tx2)}
+  .stbadge.false{color:#ff9d9d;border-color:#4a2a2a}
+  .stbadge.fixed{color:#8ee6c3;border-color:#245a44}
+  .stbadge.confirmed{color:#ffd98a;border-color:#5a4a24}
+  .stbadge.accepted{color:#c9c9ff;border-color:#39395a}
+  .gctl{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:8px}
+  .gctl input{width:auto;margin:0;min-width:170px}
+  .gctl select{width:auto;margin:0}
+  .zone{position:relative}
+  .zone .gzoom{position:absolute;right:9px;top:9px;display:flex;flex-direction:column;gap:5px;z-index:2}
+  .zone .gzoom button{width:30px;height:28px;padding:0;border-radius:6px;background:#111820;color:#cfe3f5;
+    border:1px solid var(--line);cursor:pointer}
+  .gn{cursor:pointer}
+  .gn:hover circle{stroke:#7fd1ff;stroke-width:2.5}
+  svg{width:100%;height:520px;background:#060a0f;border:1px solid var(--line);border-radius:9px;display:block}
+  .ev{font-size:12.5px}
+  .ev dt{color:var(--tx2);font-size:11px;margin-top:7px}
+  .ev dd{margin:1px 0 0}
+  footer{padding:10px 18px;color:var(--tx2);font-size:11.5px;border-top:1px solid var(--line);background:var(--bg2)}
+  .apanel{position:fixed;top:54px;right:14px;width:min(760px,94vw);max-height:78vh;overflow:auto;
+    background:var(--bg2);border:1px solid var(--line);border-radius:11px;z-index:9;
+    box-shadow:0 18px 50px rgba(0,0,0,.55)}
+  .apanel .dhead{position:sticky;top:0;background:var(--bg2);border-bottom:1px solid var(--line);
+    display:flex;align-items:center;gap:10px;padding:11px 13px}
+  .apanel .dbody{padding:12px 13px}
+  .astep{border:1px solid var(--line);border-radius:9px;padding:10px 11px;margin-bottom:9px;background:var(--bg3)}
+  .astep.impact{border-color:#5a2a2a}
+  .astep .atitle{font-weight:600;font-size:13px;margin-bottom:3px}
+  .astep .adesc{font-size:12.5px;color:var(--tx2);white-space:pre-wrap;margin:6px 0}
+  .astep .arow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:7px}
+  .astep pre{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px;
+    font-size:12px;white-space:pre-wrap;max-height:340px;overflow:auto;margin:7px 0 0}
+  .st{font-size:11px;padding:2px 8px;border-radius:20px;border:1px solid var(--line);color:var(--tx2)}
+  .st.approved{color:#ffd93d;border-color:#4a4222}
+  .st.handoff{color:#57d9a3;border-color:#2a4a3a}
+  .st.failed,.st.rejected{color:#ff9f9f;border-color:#4a2a2a}
+  .gate{font-size:12px;border-radius:8px;padding:7px 9px;margin-top:7px;border:1px solid var(--line);white-space:pre-wrap}
+  .gate.allow{background:#101b16;border-color:#245a44;color:#b9e9d4}
+  .gate.warn{background:#1d1b10;border-color:#5a4a24;color:#ffe6ad}
+  .gate.block{background:#1d1010;border-color:#5a2a2a;color:#ffc9c9}
+  .mem{display:flex;flex-direction:column;gap:5px;margin:6px 0 10px}
+  .memrow{display:flex;gap:7px;align-items:baseline;font-size:12px}
+  .memkind{font-size:10.5px;padding:1px 7px;border-radius:20px;border:1px solid var(--line);color:var(--tx2);white-space:nowrap}
+  .memkind.ban{color:#ff9f9f;border-color:#4a2a2a}
+  .memkind.decision{color:#8ee6c3;border-color:#245a44}
+  .memkind.goal{color:#8ecbff;border-color:#23405a}
+  .aprot{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:9px;
+        font-size:12px;white-space:pre-wrap;max-height:320px;overflow:auto}
+  .banner{background:#2b1d1d;border:1px solid #4a2a2a;color:#ffc9c9;padding:10px 13px;border-radius:9px;font-size:12.5px;margin-bottom:13px}
+  @media(max-width:820px){.layout{grid-template-columns:1fr}aside{max-height:none;border-right:0;border-bottom:1px solid var(--line)}}
+</style>
+</head>
+<body>
+<header>
+  <h1>ASM — анализ внешнего периметра</h1>
+  <span class="badge">пассивная разведка · NVD · CISA KEV · EPSS</span>
+  <span class="badge warn">только авторизованные цели</span>
+  <span class="grow"></span>
+  <span id="stopState" class="badge" title="Состояние кнопки стоп"></span>
+  <a class="btn sm" href="/chat"
+     style="background:#1f6feb;border-color:#1f6feb;color:#fff;font-weight:600"
+     title="Чат с агентом: разговор, инструменты, карточки решений. То же, что терминал, но в браузере.">
+    💬 Чат с агентом
+  </a>
+  <button class="btn sec sm" onclick="toggleAgent()" id="agentBtn"
+          title="Шаги агента: одобрить, отклонить, выполнить. Одобрение — решение человека, и оно записывается в журнал.">
+    🤖 Шаги агента
+  </button>
+  <button class="btn sec sm" onclick="showForm()">+ Цель</button>
+  <button class="btn sm" id="stopBtn" onclick="stopAll()"
+          style="background:#b3261e;border-color:#b3261e;color:#fff;font-weight:700;letter-spacing:.04em"
+          title="Убить все запущенные процессы и остановить сессию агента. Одно нажатие — всё прекращается.">
+    ⏹ СТОП
+  </button>
+</header>
+
+<div class="layout">
+  <aside>
+    <div class="small" style="margin-bottom:9px">Цели анализа</div>
+    <div id="targets"></div>
+    <div class="small" style="margin-top:14px;line-height:1.45">
+      Каждая цель хранит заказчика и основание (договор / письмо-разрешение).
+      Запуск фиксируется в журнале аудита.
+    </div>
+  </aside>
+
+  <main id="main"><div class="card">Выберите цель слева или добавьте новую.</div></main>
+</div>
+<footer>
+  Прототип EASM-платформы: сбор из открытых источников (crt.sh, DNS, RDAP, RIPEstat, публичные индексы баннеров, NVD/KEV/EPSS)
+  + лёгкая проба собственных сервисов. Эксплуатация уязвимостей не выполняется.
+</footer>
+
+<div id="agentPanel" class="apanel" style="display:none">
+  <div class="dhead">
+    <div class="grow">
+      <h3 style="margin:0;font-size:14px">Шаги агента</h3>
+      <div class="small muted" id="agSub"></div>
+    </div>
+    <button class="btn sec sm" onclick="toggleAgent()">Закрыть</button>
+  </div>
+  <div class="dbody" id="agBody"><div class="small muted">Загрузка…</div></div>
+</div>
+
+<div id="drawer" class="drawer">
+  <div class="dhead"><div class="grow"><h3 id="dTitle">Элемент</h3><div class="small muted" id="dSub"></div></div>
+    <button class="btn sec sm" onclick="closeDrawer()">Закрыть</button></div>
+  <div class="dbody" id="dBody"></div>
+  <div class="chat" id="dChat">
+    <div class="chatlog" id="chatlog"></div>
+    <div class="chips" id="chips"></div>
+    <div class="row" style="gap:7px">
+      <input id="q" placeholder="Спросите про этот элемент…" onkeydown="if(event.key==='Enter')askAI()" style="flex:1">
+      <button class="btn sm" onclick="askAI()" id="askBtn">Спросить</button>
+    </div>
+    <div class="small muted" id="aiMode" style="margin-top:6px"></div>
+  </div>
+</div>
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+let STATE = {targets:[], cur:null, scan:null, tab:'overview', timer:null};
+
+async function api(url, opts){
+  const r = await fetch(url, opts ? {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(opts)} : undefined);
+  return r.json();
+}
+function fmt(d){ return d ? new Date(d).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '—'; }
+
+// --- Кнопка стоп -----------------------------------------------------------
+// Одно нажатие должно заканчивать всё. Состояние показываем явно, чтобы
+// было видно: после остановки новые процессы не запускаются вовсе.
+async function refreshStopState(){
+  const el = $('#stopState'), btn = $('#stopBtn');
+  if(!el) return;
+  try{
+    const s = await api('/api/agent/state');
+    const n = (s.running || []).length;
+    if(s.stopped){
+      el.className = 'badge warn';
+      el.textContent = 'ОСТАНОВЛЕНО — новые процессы не запускаются';
+      if(btn) btn.disabled = true;
+    }else{
+      el.className = 'badge';
+      el.textContent = n ? ('идёт процессов: ' + n) : 'ожидание';
+      if(btn) btn.disabled = false;
+    }
+  }catch(e){ /* сервер недоступен — молча, чтобы не засыпать алертами */ }
+}
+async function stopAll(){
+  if(!confirm('Остановить всё?\n\n'
+    + 'Будут убиты все запущенные процессы вместе с дочерними,\n'
+    + 'активная сессия агента закроется,\n'
+    + 'ожидавшие подтверждения шаги отменятся.\n\n'
+    + 'Отменить нельзя — работу придётся начинать новой сессией.')) return;
+  const btn = $('#stopBtn');
+  if(btn){ btn.disabled = true; btn.textContent = 'останавливаю…'; }
+  try{
+    const r = await api('/api/agent/stop', {note: 'остановка из веб-интерфейса'});
+    if(r.error) alert('Не удалось остановить: ' + r.error);
+    else{
+      let m = 'Остановлено.\nПодтверждено убито деревьев: ' + r.killed;
+      const left = r.survivors || [];
+      if(left.length){
+        // Молчать об этом нельзя: процесс остался работать на объекте,
+        // и считать воздействие прекращённым рано.
+        m += '\n\n⚠ ВНИМАНИЕ: ' + left.length + ' проц. пережили остановку'
+           + ' и, возможно, всё ещё работают на объекте:\n';
+        m += left.map(function(x){ return '  pid ' + x.pid + ': ' + x.cmd; }).join('\n');
+        m += '\n\nПроверьте их вручную, прежде чем считать воздействие прекращённым.';
+      }else{
+        m += '\nВыживших нет — воздействие прекращено полностью.';
+      }
+      m += '\n\nДля возобновления: python3 app.py agent resume';
+      alert(m);
+    }
+  }catch(e){ alert('Ошибка запроса: ' + e); }
+  if(btn) btn.textContent = '⏹ СТОП';
+  refreshStopState();
+}
+setInterval(refreshStopState, 4000);
+
+// --- Панель шагов агента ---------------------------------------------------
+// Одобрение — это решение человека, и оно пишется в журнал аудита вместе с
+// тем, кто его принял. Кнопки здесь не отменяют это правило: они избавляют от
+// переключения в терминал, из-за которого одобряют не читая.
+let AG = {open:false, session:0, timer:null};
+
+function toggleAgent(){
+  AG.open = !AG.open;
+  const el = $('#agentPanel');
+  if(!el) return;
+  el.style.display = AG.open ? 'block' : 'none';
+  if(AG.open){ renderAgent(); AG.timer = setInterval(renderAgent, 5000); }
+  else if(AG.timer){ clearInterval(AG.timer); AG.timer = null; }
+}
+async function renderAgent(){
+  const body = $('#agBody');
+  if(!body || !AG.open) return;
+  let d;
+  try{ d = await api('/api/agent/plan' + (AG.session ? ('?session=' + AG.session) : '')); }
+  catch(e){ body.innerHTML = '<div class="small muted">Сервер недоступен.</div>'; return; }
+  if(d.error){ body.innerHTML = '<div class="small muted">' + esc(d.error) + '</div>'; return; }
+  AG.session = d.session || 0;
+  const sub = $('#agSub');
+  const sess = d.session_row;
+  if(sub) sub.textContent = sess
+    ? ('сессия ' + sess.id + ' · ' + (sess.target || '') + ' · ' + (sess.status === 'open' ? 'открыта' : 'закрыта'))
+    : 'открытых сессий нет';
+  // Врезка об остановке — часть того же html: вставка «до» затиралась
+  // следующей же перерисовкой, и панель выглядела спокойной при остановке.
+  let html = '';
+  if(d.halted) html += '<div class="banner">ОСТАНОВЛЕНО. Новые процессы не запускаются, '
+    + 'шаги выполнять нельзя. Возобновление: python3 app.py agent resume</div>';
+
+  const steps = d.steps || [];
+  if(!steps.length){
+    body.innerHTML = html + '<div class="small muted">Шагов нет. '
+      + 'Поставить первый: python3 app.py agent start &lt;цель&gt; '
+      + 'либо agent inside &lt;шаг&gt; &lt;сессия&gt;.</div>';
+    return;
+  }
+  // Память сессии: цели словами заказчика, запреты и решения оператора.
+  // Она идёт в каждую подсказку модели, поэтому оператор должен видеть её
+  // здесь, а не догадываться, что «агент помнит».
+  const notes = d.notes || [];
+  html += '<div class="card" style="margin:0 0 12px">'
+    + '<h2>Память сессии <span class="small muted">— учитывается в каждом плане</span></h2>';
+  if(notes.length){
+    html += '<div class="mem">' + notes.slice(-12).map(n =>
+      '<div class="memrow"><span class="memkind ' + esc(n.kind) + '">'
+      + esc(n.kind_title || n.kind) + '</span><span>' + esc(n.text) + '</span>'
+      + '<span class="small muted">' + esc(n.source || '') + '</span></div>').join('') + '</div>';
+  } else {
+    html += '<div class="small muted">Записей нет. Сюда попадают цели, запреты '
+      + 'и решения — то, что агент обязан соблюдать, пока идёт работа.</div>';
+  }
+  html += '<div class="arow"><input id="agNote" placeholder="сказать агенту: '
+    + 'цель, запрет («не трогай панель»), решение («делаем так»)" '
+    + 'style="flex:1;margin:0" onkeydown="if(event.key===\'Enter\')agSay()">'
+    + '<select id="agKind" style="width:auto;margin:0"><option value="">вид: авто</option>'
+    + '<option value="ban">запрет</option><option value="decision">решение</option>'
+    + '<option value="goal">цель</option><option value="question">вопрос</option>'
+    + '</select><button class="btn sm" onclick="agSay()">Записать</button></div>'
+    + '</div>';
+
+  // Сверенные сведения: то, что посчитал код по базам и кэшу. Раньше это жило
+  // только в подсказке модели — оператор видел план, но не видел, на чём он
+  // построен, и выдумку в сведениях можно было заметить только по отчёту.
+  const fv = d.facts || {};
+  if((fv.lines || []).length || (fv.unverified || []).length){
+    html += '<div class="card" style="margin:0 0 12px">'
+      + '<h2>Сверенные сведения <span class="small muted">— посчитано кодом по базам '
+      + 'и кэшу (режим ' + esc(fv.mode || 'cache') + ')</span></h2><div class="mem">';
+    (fv.lines || []).forEach(l => {
+      html += '<div class="memrow"><span class="memkind">факт</span><span>'
+        + esc(l) + '</span></div>';
+    });
+    (fv.unverified || []).forEach(u => {
+      html += '<div class="memrow"><span class="memkind">не проверено</span><span>'
+        + esc(u) + '</span></div>';
+    });
+    html += '</div></div>';
+  }
+
+  // Карта объекта: тот же сбор, что уходит модели в подсказку, а схема —
+  // в документ передачи. Здесь она текстом, а по кнопке — кодом mermaid.
+  const om = d.objmap || {};
+  if(om.text){
+    html += '<div class="card" style="margin:0 0 12px">'
+      + '<h2>Карта объекта <span class="small muted">— собрано кодом; '
+      + esc(om.stage || '') + '</span></h2>'
+      + '<pre id="mapText" style="white-space:pre-wrap;margin:0;font-size:12px;'
+      + 'line-height:1.45">' + esc(om.text) + '</pre>'
+      + '<pre id="mapMermaid" style="white-space:pre-wrap;margin:0;font-size:12px;'
+      + 'line-height:1.45;display:none">' + esc(om.mermaid || '') + '</pre>'
+      + '<div class="arow" style="margin-top:8px">'
+      + '<button class="btn sec sm" onclick="agToggleMap()" id="mapBtn">Схема (mermaid)</button>'
+      + '<span class="small muted">Секретов в карте нет; схема идёт и в документ передачи.</span>'
+      + '</div></div>';
+  }
+
+  html += '<div class="arow" style="margin-bottom:10px">'
+    + '<button class="btn sec sm" onclick="agPlanNext(this)">🧠 Спланировать заново</button>'
+    + '<select id="agAutoApprove" style="width:auto;margin:0">'
+    + '<option value="none">автопилот: спрашивать всё</option>'
+    + '<option value="recon">автопилот: чтение — сам, остальное — спросить</option>'
+    + '</select>'
+    + '<button class="btn sm" onclick="agAutopilot(this)">▶ Автопилот</button>'
+    + '<span class="small muted">Ворота и остановки одинаковы и в панели, и в терминале.</span>'
+    + '</div><div id="agProtocol"></div>';
+
+  const approved = steps.filter(x => x.status === 'approved').length;
+  if(approved){
+    html += '<div class="arow" style="margin-bottom:10px">'
+      + '<button class="btn sm" onclick="runApproved(this)">▶ Выполнить одобренные ('
+      + approved + ')</button>'
+      + '<span class="small muted">Шаги идут в том порядке, в котором стоят в плане.</span></div>';
+  }
+  html += steps.map(astep).join('');
+  body.innerHTML = html;
+  // Заголовки шагов для вопроса в подтверждении: иначе в диалоге виден
+  // только номер, и «одобрить шаг 7» мало чем отличается от «одобрить всё».
+  window.__agSteps = {};
+  steps.forEach(x => { window.__agSteps[x.id] = x.title; });
+}
+function astep(s){
+  const cls = (s.cls === 'impact') ? ' impact' : '';
+  const st = '<span class="st ' + esc(s.status) + '">' + esc(s.status) + '</span>';
+  const clsName = {observe:'наблюдение', probe:'проверка', impact:'ВОЗДЕЙСТВИЕ'}[s.cls] || s.cls;
+  let h = '<div class="astep' + cls + '" id="st' + s.id + '">'
+    + '<div class="atitle">шаг ' + s.id + ' · ' + esc(s.title) + '</div>'
+    + '<div class="arow">' + st
+    + '<span class="small muted">' + esc(clsName) + ' · ' + esc(s.action_id) + '</span>'
+    + (s.internal ? '<span class="badge">внутри — отправит агент по одобрению</span>' : '')
+    + '</div>';
+  if(s.describe) h += '<div class="adesc">' + esc(s.describe) + '</div>';
+  // Ворота показываются рядом с шагом: одобрять вслепую нечего.
+  const g = s.gate;
+  const blocked = g && g.action === 'block';
+  if(g && g.text) h += '<div class="gate ' + esc(g.action) + '">' + esc(g.text) + '</div>';
+  if(s.status === 'proposed'){
+    if(blocked){
+      h += '<div class="arow"><span class="small muted">Шаг не выполнится: '
+        + 'ворота запрещают. Рамку снимает только человек, и осознанно — '
+        + 'в терминале: <b>python3 app.py agent gate ' + s.id + '</b></span></div>';
+    } else {
+      h += '<div class="arow">'
+        + '<button class="btn sm" onclick="decide(' + s.id + ',true)">✔ Одобрить</button>'
+        + '<button class="btn sec sm" onclick="decide(' + s.id + ',false)">✖ Отклонить</button>'
+        + '<span class="small muted">Решение пишется в журнал аудита.</span></div>';
+    }
+  }
+  if(s.decided_at) h += '<div class="small muted" style="margin-top:6px">'
+    + 'решение: ' + esc(s.decided_by || 'не указан') + ' · ' + fmt(s.decided_at) + '</div>';
+  if(s.error) h += '<pre style="border-color:#4a2a2a">' + esc(s.error) + '</pre>';
+  if(s.result) h += '<pre>' + esc(s.result) + '</pre>';
+  return h + '</div>';
+}
+async function agSay(){
+  const el = $('#agNote');
+  const text = (el && el.value || '').trim();
+  if(!text){ alert('Пустая запись — записывать нечего.'); return; }
+  const kind = ($('#agKind') || {}).value || '';
+  const r = await api('/api/agent/note', {session: AG.session, text: text, kind: kind});
+  if(r.error){ alert('Не записано: ' + r.error); return; }
+  if(el) el.value = '';
+  renderAgent();
+}
+function agToggleMap(){
+  const t = document.getElementById('mapText'), m = document.getElementById('mapMermaid');
+  if(!t || !m) return;
+  const showM = t.style.display !== 'none';
+  t.style.display = showM ? 'none' : '';
+  m.style.display = showM ? '' : 'none';
+  const b = document.getElementById('mapBtn');
+  if(b) b.textContent = showM ? 'Текст карты' : 'Схема (mermaid)';
+}
+
+async function agPlanNext(btn){
+  if(btn){ btn.disabled = true; btn.textContent = 'планирую…'; }
+  const r = await api('/api/agent/plan_next', {session: AG.session});
+  if(btn){ btn.disabled = false; btn.textContent = '🧠 Спланировать заново'; }
+  if(r.error){ alert('План не построен: ' + r.error); return; }
+  const box = $('#agProtocol');
+  if(box){
+    const lines = ['план построен: ' + r.mode
+      + (r.model && r.model.error ? ('\nмодель: ' + r.model.error) : '')
+      + '\nв очередь поставлено: ' + (r.queued || []).length];
+    (r.warnings || []).forEach(w => lines.push('замечание: ' + w));
+    (r.skipped || []).forEach(x => lines.push('не поставлено ' + x.action + ': ' + x.reason));
+    box.innerHTML = '<div class="aprot">' + esc(lines.join('\n')) + '</div>';
+  }
+  renderAgent();
+}
+async function agAutopilot(btn){
+  const approve = ($('#agAutoApprove') || {}).value || 'none';
+  if(!confirm('Запустить автопилот из панели?\n\n'
+    + (approve === 'recon'
+        ? 'Наблюдение и чтение он одобрит сам (объект не меняется), на всём '
+          + 'остальном остановится и спросит.'
+        : 'Он выполнит только то, что вы уже одобрили, и предложит следующий круг.\n'
+          + 'Ничего не одобряется само.')
+    + '\n\nКнопка СТОП останавливает всё одним нажатием.')) return;
+  if(btn){ btn.disabled = true; btn.textContent = 'работаю…'; }
+  const r = await api('/api/agent/autopilot',
+    {session: AG.session, rounds: 3, approve: approve});
+  if(btn){ btn.disabled = false; btn.textContent = '▶ Автопилот'; }
+  if(r.error){ alert('Автопилот не пошёл: ' + r.error); return; }
+  const box = $('#agProtocol');
+  if(box) box.innerHTML = '<div class="aprot">' + esc(r.protocol || '') + '</div>';
+  renderAgent();
+  if(r.waiting && r.waiting.length){
+    const first = (r.waiting[0] || {});
+    alert('Автопилот остановился и ждёт вашего решения: '
+      + (r.stopped || '') + '\n\nБлижайший шаг: ' + (first.action || ''));
+  }
+}
+async function decide(step, approve){
+  if(approve){
+    const what = (window.__agSteps || {})[step] || '';
+    if(!confirm('Одобрить шаг ' + step + (what ? (': ' + what) : '') + '?\n\n'
+      + 'Одобрение — это разрешение на действие, и оно записывается в журнал.\n'
+      + 'Отменить одобрение нельзя.')) return;
+  }
+  const r = await api('/api/agent/decide', {step: step, approve: approve});
+  if(r.error) alert('Не принято: ' + r.error);
+  renderAgent();
+}
+async function runApproved(btn){
+  if(!confirm('Выполнить одобренные шаги?\n\n'
+    + 'Снаружи пойдут настоящие запросы к объекту.\n'
+    + 'Внутренние шаги агент отправит сам (SSH / PowerShell Remoting), а не покажет текстом.\n'
+    + 'Кнопка СТОП остановит всё одним нажатием.')) return;
+  if(btn){ btn.disabled = true; btn.textContent = 'выполняю…'; }
+  // Пароль доступа для отправки внутрь. Он уходит в этот запрос и живёт только
+  // в памяти сервера на время отправки: в базу и в журнал не пишется.
+  let secret = '';
+  if((AG.steps || []).some(x => x.internal && x.status === 'approved')){
+    secret = prompt('Пароль доступа для отправки внутрь (Enter — если не нужен: ключ или ASM_INWARD_SECRET).\n'
+      + 'Он не сохраняется ни в базе, ни в журнале.') || '';
+  }
+  const r = await api('/api/agent/run', {session: AG.session, secret: secret});
+  if(r.error){ alert('Ошибка: ' + r.error); renderAgent(); return; }
+  const bad = (r.results || []).filter(x => !x.ok);
+  if(bad.length){
+    alert('Выполнено шагов: ' + r.executed + '\n\nНе выполнено: ' + bad.length
+      + '\n' + bad.map(x => ('шаг ' + x.step + ': ' + x.reason)).join('\n')
+      + (r.survivors && r.survivors.length
+         ? '\n\n⚠ Процессы, которые всё ещё работают:\n'
+           + r.survivors.map(x => ('  pid ' + x.pid + ': ' + x.cmd)).join('\n')
+         : ''));
+  }
+  renderAgent();
+}
+
+/* ---------------- цели ---------------- */
+async function loadTargets(){
+  STATE.targets = await api('/api/targets');
+  $('#targets').innerHTML = STATE.targets.length ? STATE.targets.map(t=>`
+    <div class="tgt ${STATE.cur===t.id?'on':''}" onclick="openTarget(${t.id})">
+      <b>${esc(t.value)}</b><br>
+      <span class="small">${esc(t.client)} · основание: ${esc(t.auth_ref)}</span><br>
+      <span class="small">анализов: ${t.scans.length}${t.scans[0]?' · последний '+fmt(t.scans[0].started_at):''}</span>
+    </div>`).join('') : '<div class="small">Пока пусто. Добавьте цель — домен заказчика или его IP.</div>';
+}
+function showForm(){
+  $('#main').innerHTML = `
+  <div class="card">
+    <h2>Новая цель анализа</h2>
+    <div class="banner">Анализ выполняется только по активам, на которые у вас есть письменное разрешение владельца
+      (договор, письмо-разрешение, соглашение об оказании услуг). Данные об этом сохраняются в журнале и попадают в отчёт.</div>
+    <label>Объект анализа — домен или IP-адрес</label>
+    <input id="f_value" placeholder="client-site.ru или 203.0.113.10">
+    <label>Заказчик / владелец актива</label>
+    <input id="f_client" placeholder="ООО «Ромашка»">
+    <label>Основание (№ договора или письма-разрешения)</label>
+    <input id="f_ref" placeholder="Договор №14-А от 12.05.2026">
+    <label>Дата разрешения</label>
+    <input id="f_date" type="date">
+    <label>Заметка (необязательно)</label>
+    <input id="f_note" placeholder="например: контур интернет-магазина">
+    <div class="row" style="margin-top:8px">
+      <button class="btn" onclick="createTarget()">Сохранить</button>
+      <button class="btn sec" onclick="openTarget(STATE.cur)">Отмена</button>
+    </div>
+    <div id="f_err" class="small" style="color:#ff9d9d;margin-top:9px"></div>
+  </div>`;
+}
+async function saveMaterials(id){
+  const msg = $('#m_msg');
+  msg.textContent = 'сохраняю…';
+  const r = await api('/api/target/'+id+'/materials', {repo:$('#m_repo').value, code_path:$('#m_code').value,
+      image:$('#m_image').value});
+  msg.textContent = r.error ? ('ошибка: '+r.error) : 'материалы сохранены — они будут проверены в следующем анализе';
+  await loadTargets();
+}
+async function createTarget(){
+  const r = await api('/api/targets', {value:$('#f_value').value, client:$('#f_client').value,
+      auth_ref:$('#f_ref').value, auth_date:$('#f_date').value, note:$('#f_note').value});
+  if(r.error){ $('#f_err').textContent = r.error; return; }
+  await loadTargets(); openTarget(r.id);
+}
+
+/* ---------------- цель ---------------- */
+async function openTarget(id){
+  if(!id) return;
+  STATE.cur = id;
+  const t = STATE.targets.find(x=>x.id===id) || await api('/api/targets').then(a=>a.find(x=>x.id===id));
+  await loadTargets();
+  const last = t.scans.find(s=>s.status==='done') || t.scans[0];
+  $('#main').innerHTML = `
+  <div class="card">
+    <div class="row">
+      <div class="grow">
+        <h2 style="margin-bottom:4px">${esc(t.value)}</h2>
+        <div class="small">Заказчик: ${esc(t.client)} · Основание: ${esc(t.auth_ref)} ${t.auth_date?('· от '+esc(t.auth_date)):''}</div>
+      </div>
+      <div class="small" style="text-align:right">
+        <label style="display:inline-flex;align-items:center;gap:5px;margin:0 10px 0 0">
+          <input type="checkbox" id="act_${t.id}" checked style="width:auto;margin:0"> активные проверки</label>
+        <label style="display:inline-flex;align-items:center;gap:5px;margin:0 10px 0 0">
+          <input type="checkbox" id="est_${t.id}" checked style="width:auto;margin:0"> типовые имена и DNS</label>
+        <label style="display:inline-flex;align-items:center;gap:5px;margin:0"
+          title="Сети автономной системы могут содержать чужие адреса — подтвердите принадлежность заказчику">
+          <input type="checkbox" id="asn_${t.id}" style="width:auto;margin:0"> сети организации (осторожно)</label>
+      </div>
+      <button class="btn" onclick="startScan(${t.id})">Запустить анализ</button>
+      ${last?`<button class="btn sec sm" onclick="showScan(${last.id})">Открыть последний (№${last.id})</button>`:''}
+    </div>
+    <div class="row" style="margin-top:11px">
+      <span class="small">Анализов: ${t.scans.length}</span>
+      <span class="grow"></span>
+      <button class="btn sec sm" onclick="exportR(${last?last.id:0},'md')">Отчёт .md</button>
+      <button class="btn sec sm" onclick="exportR(${last?last.id:0},'csv')">.csv</button>
+      <button class="btn sec sm" onclick="exportR(${last?last.id:0},'json')">.json</button>
+      <span class="small" style="margin-left:10px">по расписанию:</span>
+      <select id="sched_${t.id}" style="width:auto;margin:0" onchange="setSchedule(${t.id},this.value)">
+        <option value="0">выключено</option>
+        <option value="24">каждый день</option>
+        <option value="72">раз в 3 дня</option>
+        <option value="168">раз в неделю</option>
+      </select>
+    </div>
+    <details style="margin-top:10px">
+      <summary class="small" style="cursor:pointer">Материалы заказчика для внутренней проверки (код, репозиторий, образ контейнера) — необязательно</summary>
+      <div class="small muted" style="margin:6px 0 4px">Проверяем то, что заказчик отдал сам: секреты в коде (gitleaks) и уязвимые
+        библиотеки (trivy). Копия репозитория делается только на чтение, у заказчика ничего не меняется.</div>
+      <label>Ссылка на репозиторий (git)</label>
+      <input id="m_repo" placeholder="https://github.com/client/site.git" value="${esc((t.materials||{}).repo||'')}">
+      <label>Каталог с кодом на этой машине</label>
+      <input id="m_code" placeholder="/home/audit/client-site" value="${esc((t.materials||{}).code_path||'')}">
+      <label>Образ контейнера</label>
+      <input id="m_image" placeholder="nginx:1.18 или registry.client.ru/site:2.3" value="${esc((t.materials||{}).image||'')}">
+      <div class="row" style="margin-top:8px">
+        <button class="btn sec sm" onclick="saveMaterials(${t.id})">Сохранить материалы</button>
+        <span class="small muted">Проверка выполнится при следующем анализе этой цели.</span>
+      </div>
+      <div id="m_msg" class="small" style="margin-top:6px"></div>
+    </details>
+    </div>
+  </div>
+  <div id="scanbox"></div>`;
+  if(last) showScan(last.id);
+}
+
+let VIEWS = [];
+async function loadViews(sid){
+  VIEWS = await api('/api/scan/'+sid+'/views');
+  const sel = $('#vsel'); if(!sel) return;
+  sel.innerHTML = '<option value="">виды…</option>' + VIEWS.map(v=>
+    `<option value="${v.id}">${esc(v.name)}</option>`).join('');
+}
+async function saveView(sid){
+  const name = ($('#vname') && $('#vname').value.trim()) || ('вид ' + new Date().toLocaleString('ru-RU'));
+  const state = {filter: ($('#gf')||{}).value||'', search: window.SEARCH||'',
+                 k: VIEW.k, x: VIEW.x, y: VIEW.y, paths: !!window.PATHS};
+  await api('/api/scan/'+sid+'/views', {name: name, state: state});
+  await loadViews(sid);
+  const el = $('#gd'); if(el) el.innerHTML += ' <span class="tag">вид сохранён</span>';
+}
+function applyView_(id){
+  const v = VIEWS.find(x=>String(x.id)===String(id)); if(!v) return;
+  let st = {}; try{ st = JSON.parse(v.state||'{}'); }catch(e){}
+  if($('#gf')) $('#gf').value = st.filter||'';
+  if($('#gsearch')) $('#gsearch').value = st.search||'';
+  window.SEARCH = st.search||'';
+  VIEW.k = st.k||1; VIEW.x = st.x||0; VIEW.y = st.y||0;
+  if(st.paths){ togglePaths(STATE.scan); } else { window.PATHS = null; applyView(); renderGraph(); }
+}
+async function setSchedule(tid, hours){
+  const h = parseInt(hours||'0',10);
+  await api('/api/schedule', {target_id:tid, interval_hours: h||24, enabled: h>0});
+  if(h>0) alert('Расписание сохранено: следующий анализ будет запущен автоматически. Планировщик работает, пока запущен сервер.');
+}
+async function startScan(tid){
+  const box = document.getElementById('act_'+tid);
+  const est = document.getElementById('est_'+tid);
+  const asn = document.getElementById('asn_'+tid);
+  const r = await api('/api/scan', {target_id:tid, limits:{
+      active_scan: box ? box.checked : true,
+      estate: est ? est.checked : true,
+      estate_asn: asn ? asn.checked : false}});
+  if(r.error){ alert(r.error); return; }
+  STATE.scan = r.scan_id;
+  poll(r.scan_id);
+}
+
+function poll(sid){
+  clearInterval(STATE.timer);
+  STATE.scan = sid;
+  const tick = async () => {
+    const s = await api('/api/scan/'+sid);
+    if(!s.id) return;
+    if(s.status === 'running'){
+      const pg = await api('/api/scan/'+sid+'/progress');
+      const pct = (pg.progress && pg.progress.pct!=null) ? pg.progress.pct : null;
+      const label = (pg.progress && pg.progress.text) || s.progress || '';
+      $('#scanbox').innerHTML = `
+        <div class="card">
+          <h2>Анализ №${sid} выполняется</h2>
+          <div class="muted">${esc(label)} ${pct!=null?('· '+pct+'%'):''}</div>
+          <div class="prog">${pct!=null
+            ? `<i style="width:${pct}%;animation:none;background:var(--acc)"></i>`
+            : '<i></i>'}</div>
+          <pre>${esc((s.log||'').split('\n').slice(-14).join('\n'))}</pre>
+        </div>`;
+    } else {
+      clearInterval(STATE.timer);
+      showScan(sid);
+    }
+  };
+  tick();
+  STATE.timer = setInterval(tick, 1600);
+}
+
+/* ---------------- результаты ---------------- */
+async function showScan(sid){
+  clearInterval(STATE.timer);
+  STATE.scan = sid;
+  const s = await api('/api/scan/'+sid);
+  if(!s.id) return;
+  const st = s.stats||{}, rep = st.report||{}, c = (st.priority||{});
+  if(s.status !== 'done'){
+    if(s.status === 'running') return poll(sid);
+    // «прерван» — процесс скана не пережил перезапуск окружения; отдельная подпись,
+    // чтобы это не выглядело как сбой самой проверки
+    const head = s.status === 'interrupted'
+      ? `Анализ №${sid} прерван (окружение перезапускалось)`
+      : `Анализ №${sid} завершился с ошибкой`;
+    const hint = s.status === 'interrupted'
+      ? '<div class="muted">Запустите анализ заново — кнопка «Анализ» на карточке цели.</div>' : '';
+    return $('#scanbox').innerHTML =
+      `<div class="card"><h2>${head}</h2>${hint}<pre>${esc(s.log||s.error||'')}</pre></div>`;
+  }
+  $('#scanbox').innerHTML = `
+  <div class="card">
+    <div class="row">
+      <h2 style="margin:0">Результаты анализа №${sid}</h2>
+      <span class="badge">${esc(rep.mode||'')}</span>
+      <span class="grow"></span>
+      <span class="small">начат ${fmt(s.started_at)} · завершён ${fmt(s.finished_at)}</span>
+    </div>
+    <div style="margin-top:12px">
+      <div class="tile t-p0"><b>${c.P0||0}</b><span>P0 — срочно</span></div>
+      <div class="tile t-p1"><b>${c.P1||0}</b><span>P1 — 1–2 недели</span></div>
+      <div class="tile t-p2"><b>${c.P2||0}</b><span>P2 — план</span></div>
+      <div class="tile t-p3"><b>${c.P3||0}</b><span>P3 — к сведению</span></div>
+      <div class="tile"><b>${st.assets||0}</b><span>цифровых следов</span></div>
+      <div class="tile"><b>${st.ips||0}</b><span>IP-адресов</span></div>
+      <div class="tile"><b>${st.subdomains||0}</b><span>поддоменов</span></div>
+      <div class="tile"><b>${st.services||0}</b><span>открытых сервисов</span></div>
+    </div>
+    <div class="tabs" style="margin-top:14px">
+      ${['overview:Обзор','graph:Граф связей','findings:Находки','changes:Изменения','report:Отчёт','log:Журнал анализа'].map(x=>{
+        const [k,l]=x.split(':'); return `<button class="${STATE.tab===k?'on':''}" onclick="tab('${k}',${sid})">${l}</button>`;}).join('')}
+    </div>
+    <div id="tabbody"></div>
+  </div>`;
+  tab(STATE.tab, sid);
+}
+
+let ENGINES_INFO = null;
+const ENG_RU = {nuclei:'nuclei (13 700+ проверок)', naabu:'naabu (порты)', httpx:'httpx (веб-проба)',
+  subfinder:'subfinder (имена)', amass:'amass (глубокая разведка)', dnsx:'dnsx (DNS)', tlsx:'tlsx (сертификаты)',
+  testssl:'testssl.sh (TLS-аудит)', katana:'katana (обход)', gau:'gau (архивы)', ffuf:'ffuf (поиск путей)',
+  nmap:'nmap (версии сервисов)', nikto:'Nikto (веб-серверы)', trivy:'trivy (уязвимости пакетов)', gitleaks:'gitleaks (секреты в коде)',
+  trufflehog:'TruffleHog (секреты, второй поиск)', semgrep:'Semgrep (анализ кода)', osv:'OSV-Scanner (зависимости)', wapiti:'Wapiti (веб-приложение)'};
+async function loadEngines(){ if(ENGINES_INFO) return ENGINES_INFO; try{ ENGINES_INFO = await api('/api/engines'); }catch(e){ ENGINES_INFO = {engines:[]}; } return ENGINES_INFO; }
+async function engBlock(st){
+  const counts = st.engines || {};
+  const keys = Object.keys(counts).sort((a,b)=>counts[b]-counts[a]);
+  const info = await loadEngines();
+  const inst = (info.engines||[]).filter(e=>e.installed);
+  let h = '';
+  if(keys.length){
+    h += '<div class="row" style="flex-wrap:wrap;gap:6px">' + keys.map(k =>
+      `<span class="tag">${esc(ENG_RU[k]||k)}: <b>${counts[k]}</b></span>`).join('') + '</div>';
+  } else {
+    h += '<div class="muted">движки в этом анализе не отработали (нет установленного арсенала, анализ шёл в пассивном режиме или движки ещё не дошли до цели)</div>';
+  }
+  if(st.engine_findings) h += `<div class="small" style="margin-top:6px">Дополнительных находок от движков: <b>${st.engine_findings}</b></div>`;
+  if(inst.length && info.templates){
+    h += `<div class="small muted" style="margin-top:6px">Шаблонов проверок nuclei: <b>${info.templates}</b></div>`;
+  }
+  const ROLES = {nuclei:'шаблонные проверки уязвимостей', nmap:'точные версии сервисов',
+    naabu:'все открытые порты', httpx:'статусы, технологии, CDN', nikto:'конфигурация веб-сервера',
+    testssl:'глубокий аудит TLS', tlsx:'сертификаты и имена', katana:'обход ссылок',
+    gau:'адреса из архивов', subfinder:'пассивная разведка имён', amass:'глубокая разведка',
+    dnsx:'DNS одним проходом', ffuf:'поиск скрытых путей (по флагу)',
+    trivy:'уязвимые библиотеки в коде и образе', gitleaks:'секреты в коде и открытых файлах',
+    trufflehog:'второй независимый поиск секретов', semgrep:'опасные места в исходном коде (SAST)',
+    osv:'уязвимые зависимости по базе OSV.dev', wapiti:'проверки веб-приложения без инъекций'};
+  if(inst.length){
+    h += '<details style="margin-top:6px"><summary class="small" style="cursor:pointer">Весь арсенал: '
+       + inst.length + ' инструментов и что каждый закрывает</summary>'
+       + '<div style="margin-top:6px">' + inst.map(e=>`<div class="small" style="padding:2px 0">
+            <b>${esc(e.name)}</b> ${esc(e.version||'')} — ${esc(ROLES[e.id]||e.role||'')}</div>`).join('')
+       + '</div></details>';
+  }
+  h += '<div class="small muted" style="margin-top:4px">Проверки учётных данных и агрессивные категории '
+     + '(' + (info.banned||['default-logins','brute-force','dos','fuzz']).join(', ') + ') исключены всегда.</div>';
+  return h;
+}
+const SRC_RU = {certspotter:'CertSpotter', crtsh:'crt.sh', mnemonic:'Mnemonic pDNS', otx:'AlienVault OTX',
+  urlscan:'urlscan.io', hackertarget:'HackerTarget', rapiddns:'RapidDNS', wayback:'Wayback CDX',
+  thcsubs:'ip.thc.org (поддомены)', ipthc:'ip.thc.org (обратный DNS)',
+  estate:'расширение по адресу', estate_asn:'сети организации (RIPEstat)'};
+function srcBlock(st){
+  const sc = st.sources || {}, er = st.source_errors || {};
+  const keys = Object.keys(sc).sort((a,b)=>sc[b]-sc[a]);
+  let h = '';
+  if(keys.length){
+    h += '<div class="row" style="flex-wrap:wrap;gap:6px">' + keys.map(k =>
+      `<span class="tag">${esc(SRC_RU[k]||k)}: <b>${sc[k]}</b></span>`).join('') + '</div>';
+  } else {
+    h += '<div class="muted">данных нет — анализ выполнялся до подключения мульти-источников</div>';
+  }
+  const errs = Object.keys(er).filter(k => er[k] !== 'пусто');
+  if(errs.length){
+    h += `<div class="small muted" style="margin-top:6px">Не отдали данных: ${
+      errs.map(k=>esc(SRC_RU[k]||k)).join(', ')} — анализ продолжился, остальные источники отработали.</div>`;
+  }
+  const rel = st.related_domains || [];
+  if(rel.length){
+    h += `<div class="small" style="margin-top:6px">Ещё домены на тех же IP (справочно, без сканирования): ${
+      rel.slice(0,10).map(esc).join(', ')}</div>`;
+  }
+  h += '<div class="small muted" style="margin-top:6px">Расширяется ключами (Netlas, Shodan, VirusTotal, '
+     + 'SecurityTrails) через переменные окружения — без переделки кода.</div>';
+  return h;
+}
+
+async function tab(name, sid){
+  STATE.tab = name;
+  document.querySelectorAll('.tabs button').forEach(b=>b.classList.toggle('on', b.textContent.trim()===({
+    overview:'Обзор',graph:'Граф связей',findings:'Находки',changes:'Изменения',report:'Отчёт',log:'Журнал анализа'}[name])));
+  const s = await api('/api/scan/'+sid), st = s.stats||{}, rep = st.report||{};
+  const box = $('#tabbody');
+  if(name==='overview'){
+    const top = (await api('/api/scan/'+sid+'/findings')).slice(0,12);
+    box.innerHTML = `
+      <h2 style="font-size:13px;margin:6px 0 8px">Резюме для руководителя</h2>
+      <div>${esc(rep.summary||'')}</div>
+      <h2 style="font-size:13px;margin:16px 0 8px">Инфраструктурный профиль</h2>
+      <pre>${esc(rep.infra_profile||'')}</pre>
+      <h2 style="font-size:13px;margin:16px 0 8px">Лучшее бесплатное из мира ИБ — что отработало</h2>
+      ${engBlock(st)}
+      <h2 style="font-size:13px;margin:16px 0 8px">Источники разведки — вклад в этот анализ</h2>
+      ${srcBlock(st)}
+      <h2 style="font-size:13px;margin:16px 0 8px">Приоритет защиты</h2>
+      <pre>${esc(rep.protection_priority||'')}</pre>
+      <h2 style="font-size:13px;margin:16px 0 8px">Сценарий атаки</h2>
+      <pre>${esc(rep.attack_scenario||'')}</pre>
+      ${rep.llm_report?`<h2 style="font-size:13px;margin:16px 0 8px">Заключение ИИ-аналитика (${esc(rep.mode)})</h2><div style="white-space:pre-wrap">${esc(rep.llm_report)}</div>`:''}
+      <h2 style="font-size:13px;margin:16px 0 8px">Топ находок</h2>
+      ${top.length?top.map(f=>`<div class="row" style="border-bottom:1px solid var(--line);padding:7px 0">
+        <span class="pill ${f.priority}">${f.priority}</span>
+        <span class="grow">${esc(f.title)}</span>
+        <span class="small">${esc(f.asset||f.ip||'')}</span></div>`).join(''):'<div class="muted">находок нет</div>'}`;
+  }
+  if(name==='findings'){
+    const M = {all:'все', open:'открытые', confirmed:'подтверждено', false:'ложные',
+               accepted:'принято в риск', fixed:'закрыто'};
+    const st = STATE.fstatus || 'all';
+    const qs = (st && st!=='all') ? ('?status='+encodeURIComponent(st)) : '';
+    const fs = await api('/api/scan/'+sid+'/findings'+qs);
+    window.FS = fs;
+    box.innerHTML = `
+      <div class="row" style="margin-bottom:8px">
+        <input id="fq" placeholder="поиск по находкам (CVE, продукт, адрес)…" style="width:auto;min-width:260px;margin:0"
+          onkeydown="if(event.key==='Enter')findSearch(${sid})">
+        <button class="btn sec sm" onclick="findSearch(${sid})">Найти</button>
+        <button class="btn sec sm" onclick="semSearch(${sid})"
+          title="ищет по смыслу текста находки, а не по точному слову — работает локально, без интернета">По смыслу</button>
+        <span class="grow"></span>
+        <button class="btn sec sm" onclick="makeDrafts(${sid})"
+          title="готовые заготовки проверок nuclei по находкам — чтобы перепроверять их после починки">Черновики Nuclei</button>
+        <span class="small">${fs.length} записей</span>
+      </div>
+      <div class="stat">${Object.entries(M).map(([k,l])=>
+        `<span class="statb ${st===k?'on':''}" onclick="STATE.fstatus='${k}';tab('findings',${sid})">${l}</span>`).join('')}</div>
+      <div id="searchbox"></div>
+      <table><thead><tr><th>Приоритет</th><th>Оценка</th><th>Находка</th><th>Объект</th><th>Порт</th>
+        <th>CVSS</th><th>EPSS</th><th>KEV</th><th>Статус</th><th></th></tr></thead><tbody>
+      ${fs.length ? fs.map((f,i)=>`<tr onclick="toggleEv(${i})" style="cursor:pointer">
+        <td><span class="pill ${f.priority}">${f.priority}</span></td><td>${f.score??''}</td>
+        <td>${esc(f.title)}${f.kev?' <span class="tag" style="color:#ff9d9d">эксплуатируется</span>':''}</td>
+        <td>${esc(f.asset||f.ip||'')}</td><td>${f.port??''}</td><td>${f.cvss??''}</td>
+        <td>${f.epss?Math.round(f.epss*100)+'%':''}</td><td>${f.kev?'да':''}</td>
+        <td>${statusBadge(f.status)}</td>
+        <td style="white-space:nowrap">
+          <button class="btn sec sm" onclick="event.stopPropagation();openNode('finding','',null,${f.id})">ИИ</button>
+          <button class="btn sec sm" onclick="event.stopPropagation();triage(${sid},${f.id})">триаж</button></td></tr>
+      <tr id="ev${i}" style="display:none"><td colspan="10"><div class="ev"><dl>
+        <dt>Почему такая оценка</dt><dd>${esc(f.rationale||'')}</dd>
+        ${f.status_note?`<dt>Пометка</dt><dd>${esc(f.status_note)}</dd>`:''}
+        ${f.evidence?Object.entries(f.evidence).filter(([k,v])=>v).map(([k,v])=>`<dt>${esc(k)}</dt><dd>${esc(String(v).slice(0,700))}</dd>`).join(''):''}
+        ${f.cve_id?`<dt>Первоисточник</dt><dd><a href="https://nvd.nist.gov/vuln/detail/${esc(f.cve_id)}" target="_blank">${esc(f.cve_id)} в NVD</a></dd>`:''}
+      </dl>
+      <div class="stat" style="margin-top:8px">${[['confirmed','подтверждено'],['false','ложное'],
+        ['accepted','принято в риск'],['fixed','закрыто'],['open','вернуть в открытые']]
+        .map(([k,l])=>`<span class="statb" onclick="event.stopPropagation();setStatus(${sid},${f.id},'${k}')">${l}</span>`).join('')}</div>
+      ${f.fix&&f.fix.пункты?`<div style="margin-top:12px;border-left:3px solid var(--p3);padding:9px 13px;background:#0f1b16;border-radius:0 8px 8px 0">
+        <div style="font-weight:600;margin-bottom:6px">Как закрыть — ${esc(f.fix.класс||'')}</div>
+        <ul style="margin:0 0 8px 18px;padding:0">${f.fix.пункты.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>
+        ${f.fix.команды&&f.fix.команды.length?`<div class="small" style="margin-bottom:4px">Команды и конфиги:</div>
+        <pre style="max-height:220px">${esc(f.fix.команды.join('\n\n'))}</pre>`:''}
+      </div>`:''}
+      </div></td></tr>`).join('') : ''}</tbody></table>`;
+  }
+  if(name==='changes'){
+    const d = st.diffs||{};
+    box.innerHTML = d.first_scan ? '<div class="muted">Это первый анализ цели — сравнивать не с чем. Запустите повторный анализ позже, чтобы видеть изменения.</div>' :
+    `<div class="small">Сравнение со сканом №${d.previous_scan_id}</div>
+     ${[['new_assets','Новые активы'],['removed_assets','Пропали активы'],['new_findings','Новые находки'],['fixed_findings','Закрытые находки']]
+      .map(([k,l])=>{const v=d[k]||[];return `<h2 style="font-size:13px;margin:14px 0 7px">${l} <span class="muted">(${v.length})</span></h2>
+        ${v.length?`<div>${v.slice(0,50).map(x=>`<span class="tag">${esc(typeof x==='object'?(x.what+' @ '+(x.asset||'')+(x.port?':'+x.port:'')):x)}</span>`).join('')}</div>`:'<div class="muted small">нет изменений</div>'}`}).join('')}`;
+  }
+  if(name==='graph'){
+    const KINDS = {domain:'домен', root:'домен', subdomain:'поддомен', ip:'IP-адрес', service:'порт/сервис',
+                   tech:'технология', cert:'сертификат', asn:'сеть', other:'прочее'};
+    box.innerHTML = `
+      <div class="gctl">
+        <input id="gsearch" placeholder="найти узел по имени…" onkeydown="if(event.key==='Enter')graphSearch(${sid})">
+        <button class="btn sec sm" onclick="graphSearch(${sid})">Найти</button>
+        <select id="gf" onchange="renderGraph()"><option value="">все типы</option>
+          ${Object.entries(KINDS).map(([k,l])=>`<option value="${k}">${l}</option>`).join('')}</select>
+        <button class="btn sec sm" id="pathbtn" onclick="togglePaths(${sid})">Пути до риска</button>
+        <button class="btn sec sm" onclick="saveLayout()">Сохранить расположение</button>
+        <input id="vname" placeholder="название вида…" style="min-width:140px">
+        <button class="btn sec sm" onclick="saveView(${sid})">Сохранить вид</button>
+        <select id="vsel" onchange="applyView_(this.value)"><option value="">виды…</option></select>
+        <button class="btn sec sm" onclick="resetView()">Сброс вида</button>
+        <span class="grow"></span>
+        <button class="btn sec sm" onclick="exportGraphPng()" title="сохранить картинку графа в файл">Картинка PNG</button>
+        <button class="btn sec sm" onclick="toggleGraphMode()" title="для больших графов включается быстрый режим на canvas">Режим графа</button>
+      </div>
+      <div class="zone">
+        <div class="gzoom">
+          <button title="приблизить" onclick="zoomBy(1.25)">+</button>
+          <button title="отдалить" onclick="zoomBy(0.8)">−</button>
+          <button title="вписать" onclick="fitView()">⤢</button>
+        </div>
+        <svg id="g" viewBox="0 0 1000 560"></svg>
+        <div id="cy" style="display:none;width:100%;height:560px;background:#0d1420;border:1px solid var(--line);border-radius:8px"></div>
+      </div>
+      <div id="gd" class="small" style="margin-top:8px"></div>`;
+    const g = await api('/api/scan/'+sid+'/graph');
+    window.GRAPH = g; window.PATHS = null; window.SEARCH = '';
+    resetView(); renderGraph();
+    loadViews(sid);
+  }
+  if(name==='report'){
+    const md = await fetch('/api/scan/'+sid+'/report?fmt=md').then(r=>r.text());
+    box.innerHTML = `<div class="row" style="margin-bottom:9px">
+        <button class="btn sm" onclick="showSummary(${sid})">Сводка для руководителя</button>
+        <button class="btn sec sm" onclick="exportR(${sid},'md')">Скачать .md</button>
+        <button class="btn sec sm" onclick="exportR(${sid},'csv')">.csv</button>
+        <button class="btn sec sm" onclick="exportR(${sid},'json')">.json</button>
+        <button class="btn sec sm" onclick="window.open('/api/scan/'+${sid}+'/summary','_blank')">Сводку файлом</button></div>
+      <div id="sumbox"></div>
+      <pre style="max-height:640px">${esc(md)}</pre>`;
+  }
+  if(name==='log'){
+    box.innerHTML = `<pre>${esc(s.log||'')}</pre>`;
+  }
+}
+async function saveRegistry(value){
+  const r = await api('/api/registry', {value: value, kind:'asset',
+    criticality: ($('#rg_crit')||{}).value||'', exposure: ($('#rg_exp')||{}).value||'',
+    owner: ($('#rg_owner')||{}).value||'', note: ($('#rg_note')||{}).value||'',
+    tags: ($('#rg_tags')||{}).value||''});
+  const m = $('#rg_msg'); if(m) m.textContent = r.ok ? 'сохранено · учтётся в следующем анализе' : (r.error||'ошибка');
+}
+async function showSummary(sid){
+  const md = await fetch('/api/scan/'+sid+'/summary').then(r=>r.text());
+  $('#sumbox').innerHTML = `<div class="card" style="background:#0d141b">${mdMini(md)}</div>`;
+}
+function statusBadge(st){
+  const M = {open:'открыто', confirmed:'подтверждено', false:'ложное', accepted:'принято в риск', fixed:'закрыто'};
+  st = st || 'open';
+  return `<span class="stbadge ${st}">${M[st]||st}</span>`;
+}
+async function setStatus(sid, fid, st){
+  const note = (st==='false'||st==='accepted') ? (prompt('Короткая пометка (необязательно):')||'') : '';
+  const r = await api('/api/findings/'+fid+'/status', {status: st, note: note});
+  if(r.error){ alert(r.error); return; }
+  tab('findings', sid);
+  if(NODE.element && NODE.element.type==='finding') openNode('finding','',null,fid);
+}
+async function findSearch(sid){
+  const q = ($('#fq') && $('#fq').value.trim()) || '';
+  const boxEl = $('#searchbox');
+  if(!q){ boxEl.innerHTML=''; return; }
+  const rows = await api('/api/scan/'+sid+'/search?q='+encodeURIComponent(q));
+  boxEl.innerHTML = rows.length ? `<div class="card" style="margin:10px 0"><div class="small">Найдено: ${rows.length}</div>
+    ${rows.map(f=>`<div class="row" style="border-bottom:1px solid var(--line);padding:5px 0;cursor:pointer"
+      onclick="openNode('finding','',null,${f.id})">
+      <span class="pill ${f.priority}">${f.priority}</span><span class="grow">${esc(f.title)}</span>
+      <span class="small">${esc(f.asset||f.ip||'')}</span>${statusBadge(f.status)}</div>`).join('')}</div>`
+    : '<div class="small muted" style="margin:8px 0">Ничего не найдено.</div>';
+}
+async function semSearch(sid){
+  const q = ($('#fq') && $('#fq').value.trim()) || '';
+  const boxEl = $('#searchbox');
+  if(!q){ boxEl.innerHTML = '<div class="small muted" style="margin:8px 0">Напишите своими словами, что ищем — например «открытый каталог» или «старое шифрование».</div>'; return; }
+  boxEl.innerHTML = '<div class="small muted" style="margin:8px 0">Считаю близость по смыслу…</div>';
+  const r = await api('/api/scan/'+sid+'/semantic?q='+encodeURIComponent(q));
+  if(r.error){ boxEl.innerHTML = '<div class="small" style="color:#ff9d9d">'+esc(r.error)+'</div>'; return; }
+  const rows = r.results||[];
+  boxEl.innerHTML = rows.length ? `<div class="card" style="margin:10px 0">
+    <div class="small">${esc(r.mode||'поиск по смыслу')} · близость: ${esc(r.backend||'')} · находок в базе: ${r.indexed||0}</div>
+    ${rows.map(it=>`<div class="row" style="border-bottom:1px solid var(--line);padding:5px 0;cursor:pointer"
+      onclick="openNode('finding','',null,${it.finding.id})">
+      <span class="pill ${it.priority}">${it.priority}</span>
+      <span class="grow">${esc(it.title)}</span>
+      <span class="small">${esc(it.finding.asset||'')} · ${esc(it.why)}</span></div>`).join('')}</div>`
+    : '<div class="small muted" style="margin:8px 0">Ничего близкого не нашлось.</div>';
+}
+async function makeDrafts(sid){
+  const boxEl = $('#searchbox');
+  boxEl.innerHTML = '<div class="small muted" style="margin:8px 0">Готовлю черновики проверок…</div>';
+  const r = await api('/api/scan/'+sid+'/drafts');
+  const items = r.items||[];
+  if(!items.length){
+    boxEl.innerHTML = '<div class="small muted" style="margin:8px 0">По этому анализу нечего превратить в проверку: нужны находки с адресом объекта.</div>';
+    return;
+  }
+  const tpl = items.filter(x=>x.kind!=='command').length;
+  boxEl.innerHTML = `<div class="card" style="margin:10px 0">
+    <div class="row"><b class="grow">Черновики проверок Nuclei: ${items.length}</b>
+      <span class="small">шаблонов: ${tpl} · команд повторной проверки: ${items.length-tpl}</span>
+      <a class="btn sec sm" href="/api/scan/${sid}/drafts.zip">Скачать .zip</a></div>
+    <div class="small muted" style="margin:6px 0 8px">Проверка синтаксиса: <code>nuclei -validate -t *.yaml</code>,
+      запуск по своему сайту: <code>nuclei -t *.yaml -u https://ваш-сайт</code>.
+      Файлы лежат в ${esc(r.folder||'')}</div>
+    ${items.slice(0,12).map(d=>`<details style="margin-bottom:6px"><summary style="cursor:pointer">
+        <span class="tag">${esc(d.kind==='command'?'команда':'шаблон')}</span> ${esc(d.filename)}</summary>
+        <pre style="max-height:260px;margin-top:6px">${esc(d.yaml)}</pre></details>`).join('')}
+  </div>`;
+}
+async function recheck(){
+  const el = $('#recheckbox'); if(!el) return;
+  const ip = (NODE.element && (NODE.element.value||'').split(':')[0]) || '';
+  const port = parseInt((NODE.element && NODE.element.port) || (NODE.element && (NODE.element.value||'').split(':')[1]) || '0', 10);
+  if(!ip || !port){ el.innerHTML = 'Для этой карточки точечная проверка недоступна.'; return; }
+  el.innerHTML = '<span class="muted">проверяю заново…</span>';
+  const r = await api('/api/scan/'+STATE.scan+'/recheck', {host: ip, port: port});
+  if(r.error){ el.innerHTML = esc(r.error); return; }
+  const pr = r.probe||{};
+  el.innerHTML = `<div style="margin:6px 0;padding:8px 10px;background:#0f1620;border-radius:8px">
+    <b>Свежая проверка ${esc(r.host)}:${r.port}</b><br>
+    порт ${r.tcp_open===true?'открыт':(r.tcp_open===false?'закрыт/не отвечает':'неизвестно')}
+    ${pr.status?(' · HTTP '+pr.status):''}${pr.server?(' · '+esc(pr.server)):''}
+    ${pr.title?('<br>заголовок: '+esc(pr.title)):''}
+    ${pr.error?('<br>ошибка: '+esc(pr.error)):''}
+    <br><span class="muted">Ответ сервера приложен к журналу аудита. Для окончательного вердикта — «Мнение ИИ» и подтверждение администратора.</span></div>`;
+}
+async function triage(sid, fid){
+  await openNode('finding','',null,fid);
+  const boxEl = document.createElement('div');
+  boxEl.className = 'msg a'; boxEl.id = 'triagebox';
+  boxEl.innerHTML = '<b>Мнение ИИ по достоверности</b><br><span class="muted">собираю…</span>';
+  $('#chatlog').innerHTML = '';
+  $('#chatlog').appendChild(boxEl);
+  let acc = '', verdict = null;
+  const resp = await fetch('/api/ai/triage', {method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({scan_id:sid, finding_id:fid})});
+  const reader = resp.body.getReader(); const dec = new TextDecoder(); let buf='';
+  while(true){
+    const {done, value} = await reader.read(); if(done) break;
+    buf += dec.decode(value, {stream:true});
+    const parts = buf.split('\n\n'); buf = parts.pop();
+    for(const p of parts){
+      const lines = p.split('\n');
+      const evt = (lines.find(l=>l.startsWith('event:'))||'').slice(6).trim();
+      const dl = lines.find(l=>l.startsWith('data:'))||'';
+      let d={}; try{ d = JSON.parse(dl.slice(5).trim()||'{}'); }catch(e){}
+      if(evt==='token'){ acc += (d.text||''); boxEl.innerHTML = '<b>Мнение ИИ по достоверности</b><br>'+mdMini(acc); }
+      else if(evt==='verdict'){ verdict = d.text ? JSON.parse(d.text) : null; }
+      else if(evt==='error'){ acc += '\n[ошибка: '+(d.text||'')+']'; boxEl.innerHTML = mdMini(acc); }
+    }
+  }
+  if(verdict){
+    const V = {'подтверждено':'#57d9a3','ложное':'#ff9d9d','недостаточно данных':'#ffd93d'}[verdict['вердикт']]||'#93a4b8';
+    boxEl.innerHTML = '<b>Мнение ИИ по достоверности</b><br>' + mdMini(acc) +
+      `<div style="margin-top:8px;padding-top:8px;border-top:1px solid #1d3529">
+        <b style="color:${V}">Вердикт: ${esc(verdict['вердикт'])}</b> · уверенность ${esc(verdict['уверенность'])||0}%
+        <div class="small" style="margin-top:5px">Чем подтвердить: ${(verdict['чем_подтвердить']||[]).map(x=>esc(x)).join('; ')}</div>
+        <div class="small muted" style="margin-top:5px">Это совет ИИ, а не факт. Решение принимает человек.</div></div>`;
+  }
+}
+function toggleEv(i){ const e=$('#ev'+i); if(e) e.style.display = e.style.display==='none'?'table-row':'none'; }
+function exportR(sid,fmt){ if(!sid) return alert('Сначала запустите анализ'); window.open('/api/scan/'+sid+'/report?fmt='+fmt,'_blank'); }
+
+/* ---------------- граф ---------------- */
+const COLORS = {domain:'#3fa9f5',root:'#3fa9f5',subdomain:'#7fd1ff',ip:'#57d9a3',service:'#ffd93d',
+                tech:'#ff9f43',cert:'#c58cff',asn:'#93a4b8',other:'#93a4b8'};
+const VIEW = {k:1, x:0, y:0};
+function resetView(){ VIEW.k=1; VIEW.x=0; VIEW.y=0; applyView(); }
+function applyView(){ const g = $('#gv'); if(g) g.setAttribute('transform', `translate(${VIEW.x},${VIEW.y}) scale(${VIEW.k})`); }
+function zoomBy(f){ VIEW.k = Math.max(0.25, Math.min(4, VIEW.k*f)); applyView(); }
+function fitView(){ VIEW.k=1; VIEW.x=0; VIEW.y=0; applyView(); }
+function svgPoint(evt){
+  const svg = $('#g'); const pt = svg.createSVGPoint(); pt.x = evt.clientX; pt.y = evt.clientY;
+  const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+  return {x:(p.x - VIEW.x)/VIEW.k, y:(p.y - VIEW.y)/VIEW.k};
+}
+function graphSearch(sid){
+  const q = ($('#gsearch').value||'').trim().toLowerCase();
+  window.SEARCH = q;
+  renderGraph();
+  if(q){
+    const hit = (window.GNODES||[]).find(n=>(n.label||'').toLowerCase().includes(q));
+    if(hit){ centerOn(hit); }
+    else alert('Ничего не найдено в графе.');
+  }
+}
+function centerOn(n){
+  VIEW.k = Math.max(VIEW.k, 1.4);
+  VIEW.x = 500 - n.x*VIEW.k; VIEW.y = 280 - n.y*VIEW.k; applyView();
+}
+async function togglePaths(sid){
+  if(window.PATHS){ window.PATHS = null; renderGraph(); return; }
+  const p = await api('/api/scan/'+sid+'/paths');
+  window.PATHS = p;
+  renderGraph();
+  if(!p.paths.length){ alert('Путей до критичных находок не найдено (нет находок P0/P1 или нет связей).'); window.PATHS=null; renderGraph(); return; }
+  const boxEl = $('#gd');
+  boxEl.innerHTML += `<div style="margin-top:7px">${p.paths.slice(0,6).map(x=>
+    `<div>маршрут: <b>${esc(x.от)}</b> → <b>${esc(x.до)}</b> (${x.шагов} шагов) · ${esc(x.приоритет)} ${esc((x.находка||'').slice(0,70))}</div>`).join('')}</div>`;
+}
+function saveLayout(){
+  const pos = {}; (window.GNODES||[]).forEach(n=>{ pos[n.id] = [Math.round(n.x), Math.round(n.y)]; });
+  api('/api/scan/'+STATE.scan+'/layout', {positions: pos}).then(()=>{
+    const el = $('#gd'); if(el) el.innerHTML += ' <span class="tag">расположение сохранено</span>';
+  });
+}
+
+function renderGraph(){
+  const g = window.GRAPH; if(!g) return;
+  const filt = $('#gf') ? $('#gf').value : '';
+  const svg = $('#g'); if(!svg) return;
+  const W=1000,H=560;
+  const saved = g.layout || {};
+  let nodes = [], index = new Map();
+  const addNode = (id, kind, label, meta) => {
+    if(index.has(id)) return index.get(id);
+    const sv = saved[id];
+    const n = {id, kind, label, meta,
+               x: sv ? sv.x : W/2 + (Math.random()-0.5)*420,
+               y: sv ? sv.y : H/2 + (Math.random()-0.5)*300, fixed: !!sv};
+    index.set(id, n); nodes.push(n); return n;
+  };
+  g.nodes.forEach(n=>{
+    const kind = n.kind==='subdomain' && n.meta && n.meta['роль'] ? 'root' : n.kind;
+    addNode(n.kind+':'+n.value, kind, n.value, n.meta);
+  });
+  g.edges.forEach(e=>{ if(!index.has(e.src.split(':')[0]+':'+e.src)) addNode(e.src.split(':')[0]+':'+e.src,'other',e.src,{});
+    if(!index.has(e.dst.split(':')[0]+':'+e.dst)) addNode(e.dst.split(':')[0]+':'+e.dst,'other',e.dst,{}); });
+  let links = g.edges.map(e=>({s:index.get(e.src.split(':')[0]+':'+e.src),
+                               t:index.get(e.dst.split(':')[0]+':'+e.dst), rel:e.rel}))
+                      .filter(l=>l.s&&l.t);
+  if(filt){
+    const keep = new Set(nodes.filter(n=>n.kind===filt).map(n=>n.id));
+    links.forEach(l=>{ if(keep.has(l.s.id)) keep.add(l.t.id); if(keep.has(l.t.id)) keep.add(l.s.id); });
+    nodes = nodes.filter(n=>keep.has(n.id)); links = links.filter(l=>keep.has(l.s.id)&&keep.has(l.t.id));
+  }
+  // Большой граф физикой в SVG не отрисовать: больше 1200 узлов или ручной режим -> canvas (cytoscape).
+  // Простой режим остаётся для малых графов: он умеет ручную правку узлов, чего у canvas нет.
+  const useCanvas = (nodes.length > 1200 || window.CY_FORCE) && !!window.cytoscape;
+  if(nodes.length > 1200 && !useCanvas){
+    nodes = nodes.slice(0,1200); const ids=new Set(nodes.map(n=>n.id));
+    links = links.filter(l=>ids.has(l.s.id)&&ids.has(l.t.id));
+  }
+  const deg = {};
+  links.forEach(l=>{deg[l.s.id]=(deg[l.s.id]||0)+1;deg[l.t.id]=(deg[l.t.id]||0)+1;});
+  if(useCanvas){ return renderGraphCanvas(nodes, links, deg, filt); }
+  const needLayout = nodes.some(n=>!n.fixed);
+  if(needLayout){
+    for(let it=0; it<180; it++){
+      const k = 1 - it/180;
+      for(let i=0;i<nodes.length;i++) for(let j=i+1;j<nodes.length;j++){
+        const a=nodes[i],b=nodes[j]; if(a.fixed&&b.fixed) continue;
+        let dx=b.x-a.x,dy=b.y-a.y,d2=dx*dx+dy*dy||1;
+        if(d2 < 22000){ const d=Math.sqrt(d2), f=(22000-d2)/d*0.0009*k;
+          if(!a.fixed){ a.x-=dx/d*f*40; a.y-=dy/d*f*40; } if(!b.fixed){ b.x+=dx/d*f*40; b.y+=dy/d*f*40; } }
+      }
+      links.forEach(l=>{ const a=l.s,b=l.t; let dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||1;
+        const f=(d-130)*0.008*k;
+        if(!a.fixed){ a.x+=dx/d*f*40; a.y+=dy/d*f*40; } if(!b.fixed){ b.x-=dx/d*f*40; b.y-=dy/d*f*40; } });
+      nodes.forEach(n=>{ if(n.fixed) return;
+        n.x += (W/2-n.x)*0.0015*k; n.y += (H/2-n.y)*0.0015*k;
+        n.x=Math.max(30,Math.min(W-30,n.x)); n.y=Math.max(24,Math.min(H-24,n.y)); });
+    }
+  }
+  window.CY && window.CY.destroy && (window.CY = null);
+  if($('#cy')) $('#cy').style.display = 'none';
+  if(svg) svg.style.display = '';
+  const R = n => Math.max(7, Math.min(26, 7 + (deg[n.id]||0)*2.4));
+  const PH = window.PATHS, S = window.SEARCH;
+  const inPath = new Set((PH && PH.nodes) || []);
+  const pathLinks = new Set(((PH && PH.links) || []).map(x=>x[0]+'|'+x[1]).concat(
+      ((PH && PH.links) || []).map(x=>x[1]+'|'+x[0])));
+  const risky = new Set((PH && PH.risk_nodes) || []);
+  const parts = [];
+  let lp = [];
+  links.forEach(l=>{
+    const isPath = pathLinks.has(l.s.label+'|'+l.t.label) || pathLinks.has(l.s.id+'|'+l.t.id);
+    const dim = PH && !isPath;
+    lp.push(`<line x1="${l.s.x.toFixed(1)}" y1="${l.s.y.toFixed(1)}" x2="${l.t.x.toFixed(1)}" y2="${l.t.y.toFixed(1)}"
+      stroke="${isPath?'#ff6b6b':(dim?'#1a2534':'#233043')}" stroke-width="${isPath?2.4:1}"
+      opacity="${dim?0.35:1}"><title>${esc(l.rel||'')}</title></line>`);
+  });
+  window.GNODES = nodes;
+  nodes.forEach((n,idx)=>{
+    const label = String(n.label||'');
+    const match = S && label.toLowerCase().includes(S);
+    const isRisk = risky.has(label) || risky.has(n.id);
+    const dim = PH && !inPath.has(label) && !inPath.has(n.id);
+    const ring = isRisk ? 'stroke="#ff4d4d" stroke-width="2.6"' : (match ? 'stroke="#ffd93d" stroke-width="2.6"' : 'stroke="#0b0f14" stroke-width="1.5"');
+    parts.push(`<g class="gn" data-i="${idx}" data-id="${esc(n.id)}" opacity="${dim?0.3:1}">
+      <circle cx="${n.x.toFixed(1)}" cy="${n.y.toFixed(1)}" r="${R(n)}"
+        fill="${COLORS[n.kind]||COLORS.other}" fill-opacity="0.85" ${ring}>
+        <title>${esc(label)}\n${esc(KIND_RU[n.kind]||n.kind)}${n.meta&&n.meta['источник']?('\nисточник: '+esc(n.meta['источник'])):''}</title></circle>
+      <text x="${n.x.toFixed(1)}" y="${(n.y+R(n)+11).toFixed(1)}" fill="#93a4b8" font-size="10"
+        text-anchor="middle">${esc(label.length>26?label.slice(0,24)+'…':label)}</text></g>`);
+  });
+  svg.innerHTML = `<g id="gv" transform="translate(${VIEW.x},${VIEW.y}) scale(${VIEW.k})">
+      <g id="glinks">${lp.join('')}</g><g id="gnodes">${parts.join('')}</g></g>`;
+  // клик и перетаскивание узлов; панорама по фону; зум колесом
+  let drag = null;
+  svg.querySelectorAll('.gn').forEach(el=>{
+    el.addEventListener('mousedown', ev=>{
+      ev.stopPropagation();
+      const n = window.GNODES[+el.dataset.i];
+      drag = {node:n, moved:false};
+    });
+    el.addEventListener('click', ev=>{
+      if(drag && drag.moved) return;
+      const n = window.GNODES[+el.dataset.i];
+      const kind = (n.kind==='service') ? 'port' : 'asset';
+      openNode(kind, n.label, n.meta||{}, null, n.kind);
+    });
+  });
+  let panned = false;
+  svg.addEventListener('mousedown', ev=>{ if(!ev.target.closest('.gn')){ drag = {pan:true, x:ev.clientX, y:ev.clientY}; panned=false; } });
+  window.addEventListener('mousemove', ev=>{
+    if(!drag) return;
+    if(drag.pan){
+      VIEW.x += ev.clientX - drag.x; VIEW.y += ev.clientY - drag.y;
+      drag.x = ev.clientX; drag.y = ev.clientY; panned = true; applyView();
+    } else if(drag.node){
+      const p = svgPoint(ev); drag.node.x = p.x; drag.node.y = p.y; drag.node.fixed = true; drag.moved = true;
+      const el = svg.querySelector(`.gn[data-id="${drag.node.id}"]`);
+      if(el){ const c = el.querySelector('circle'), t = el.querySelector('text'), r = +c.getAttribute('r');
+        c.setAttribute('cx', p.x); c.setAttribute('cy', p.y);
+        t.setAttribute('x', p.x); t.setAttribute('y', p.y + r + 11); }
+    }
+  });
+  window.addEventListener('mouseup', ()=>{
+    if(drag && drag.node && drag.moved){
+      const pos = {}; window.GNODES.forEach(n=>{ pos[n.id] = [Math.round(n.x), Math.round(n.y)]; });
+      api('/api/scan/'+STATE.scan+'/layout', {positions: pos});
+    }
+    drag = null;
+  });
+  svg.addEventListener('wheel', ev=>{ ev.preventDefault(); zoomBy(ev.deltaY<0?1.1:0.9); }, {passive:false});
+  const kinds = {}; nodes.forEach(n=>kinds[n.kind]=(kinds[n.kind]||0)+1);
+  $('#gd').innerHTML = `<b>узлов:</b> ${nodes.length} · <b>связей:</b> ${links.length} · ` +
+    Object.entries(kinds).map(([k,v])=>`<span class="tag">${esc(KIND_RU[k]||k)}: ${v}</span>`).join(' ') +
+    (PH?` <span class="tag" style="color:#ff8b8b">подсвечены пути до риска: ${(PH.paths||[]).length}</span>`:'') +
+    (S?` <span class="tag">поиск: ${esc(S)}</span>`:'') +
+    ' <span class="small">клик — карточка, перетаскивание — переместить узел, колесо — масштаб, фон — сдвиг.</span>';
+}
+
+function renderGraphCanvas(nodes, links, deg, filt){
+  const host = $('#cy'); if(!host) return;
+  const svg = $('#g'); if(svg) svg.style.display = 'none';
+  host.style.display = 'block';
+  const saved = (window.GRAPH && window.GRAPH.layout) || {};
+  const els = nodes.map(n=>({data:{id:n.id, label:String(n.label||''), kind:n.kind,
+      meta:(n.meta&&n.meta['источник'])||''}}))
+    .concat(links.map((l,i)=>({data:{id:'e'+i, source:l.s.id, target:l.t.id, rel:l.rel||''}})));
+  const savedPos = {};
+  nodes.forEach(n=>{ const sv = saved[n.id]; if(sv) savedPos[n.id] = {x:sv.x, y:sv.y}; });
+  window.CY = cytoscape({
+    container: host, elements: els, wheelSensitivity: 0.2,
+    style: [
+      {selector:'node', style:{'background-color': ele=>COLORS[ele.data('kind')]||COLORS.other,
+        'width': ele=>Math.max(8, Math.min(30, 8 + (deg[ele.data('id')]||0)*2.2)),
+        'height': ele=>Math.max(8, Math.min(30, 8 + (deg[ele.data('id')]||0)*2.2)),
+        'label':'data(label)', 'font-size':'9px', 'color':'#93a4b8',
+        'text-valign':'bottom', 'text-margin-y':2, 'text-max-width':'110px', 'text-wrap':'ellipsis'}},
+      {selector:'edge', style:{'width':0.8, 'line-color':'#233043', 'curve-style':'haystack'}},
+      {selector:'.risk', style:{'border-width':3, 'border-color':'#ff4d4d'}},
+      {selector:'.found', style:{'border-width':3, 'border-color':'#ffd93d'}}
+    ],
+    layout: Object.keys(savedPos).length === nodes.length ? {name:'preset', positions: savedPos}
+            : {name:'cose', animate:false, nodeRepulsion: 6000, idealEdgeLength: 60, numIter: 400}
+  });
+  const risky = new Set(((window.PATHS||{}).risk_nodes)||[]);
+  const S = window.SEARCH || '';
+  window.CY.nodes().forEach(n=>{
+    const id = n.data('id'), label = String(n.data('label')||'');
+    n.data('kind', id.split(':')[0]);
+    if(risky.has(label) || risky.has(id)) n.addClass('risk');
+    if(S && label.toLowerCase().includes(S)) n.addClass('found');
+  });
+  const rel = {};
+  window.CY.edges().forEach(e=>{ const l = links.find(x=>x.s.id===e.data('source') && x.t.id===e.data('target'));
+    if(l && l.rel) e.data('rel', l.rel); });
+  window.CY.on('tap', 'node', ev=>{
+    const n = ev.target; const label = String(n.data('label')||'');
+    const kind = (n.data('kind')==='service') ? 'port' : 'asset';
+    openNode(kind, label, {}, null, n.data('kind'));
+  });
+  window.CY.on('mouseup', ()=>{  // запоминаем расположение узлов, как и в простом режиме
+    const pos = {}; window.CY.nodes().forEach(n=>{ const p = n.position(); pos[n.data('id')] = [Math.round(p.x), Math.round(p.y)]; });
+    api('/api/scan/'+STATE.scan+'/layout', {positions: pos});
+  });
+  host.ondblclick = ()=>window.CY.fit();
+  const kinds = {}; nodes.forEach(n=>kinds[n.kind]=(kinds[n.kind]||0)+1);
+  $('#gd').innerHTML = `<b>узлов:</b> ${nodes.length} · <b>связей:</b> ${links.length} · ` +
+    Object.entries(kinds).map(([k,v])=>`<span class="tag">${esc(KIND_RU[k]||k)}: ${v}</span>`).join(' ') +
+    ' <span class="tag">быстрый режим (canvas): большой граф</span>' +
+    ' <span class="small">колесо — масштаб, тянуть фон — сдвиг, тянуть узел — переместить, двойной клик — вписать.</span>';
+}
+function toggleGraphMode(){
+  window.CY_FORCE = !window.CY_FORCE;
+  if($('#gd')) $('#gd').insertAdjacentHTML('afterbegin', `<span class="tag">режим: ${window.CY_FORCE?'быстрый (canvas)':'простой (SVG)'}</span> `);
+  renderGraph();
+}
+async function exportGraphPng(){
+  const sid = STATE.scan; if(!sid) return;
+  if(window.CY && window.CY.png){
+    const url = window.CY.png({full:true, scale:2, bg:'#0d1420'});
+    const a = document.createElement('a'); a.href = url; a.download = `graph-scan-${sid}.png`; a.click();
+    return;
+  }
+  const svg = $('#g'); if(!svg) return;
+  const clone = svg.cloneNode(true);
+  clone.setAttribute('xmlns','http://www.w3.org/2000/svg');
+  clone.setAttribute('width', 1000); clone.setAttribute('height', 560);
+  const bg = document.createElementNS('http://www.w3.org/2000/svg','rect');
+  bg.setAttribute('width','100%'); bg.setAttribute('height','100%'); bg.setAttribute('fill','#0d1420');
+  clone.insertBefore(bg, clone.firstChild);
+  const data = new XMLSerializer().serializeToString(clone);
+  const img = new Image();
+  img.onload = ()=>{
+    const c = document.createElement('canvas'); c.width = 2000; c.height = 1120;
+    const ctx = c.getContext('2d'); ctx.scale(2,2); ctx.drawImage(img, 0, 0);
+    const a = document.createElement('a'); a.href = c.toDataURL('image/png');
+    a.download = `graph-scan-${sid}.png`; a.click();
+  };
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(data);
+}
+
+/* ==================== боковая панель элемента ==================== */
+const NODE = {element:null, history:[], label:'', stream:null};
+const KIND_RU = {domain:'домен',root:'домен',subdomain:'поддомен',ip:'IP-адрес',service:'сервис',
+                 tech:'технология',cert:'сертификат',asn:'автономная система',other:'объект'};
+
+function openNodeIdx(i){
+  const n = (window.GNODES||[])[i]; if(!n) return;
+  const kind = (n.kind==='service') ? 'port' : 'asset';
+  openNode(kind, n.label, n.meta||{}, null, n.kind);
+}
+
+async function openNode(kind, value, meta, id, rawKind){
+  const sid = STATE.scan; if(!sid){ alert('Сначала выберите и запустите анализ'); return; }
+  const drawer = $('#drawer'); drawer.classList.add('on');
+  $('#dTitle').textContent = kind==='finding' ? 'Находка' : (KIND_RU[rawKind||kind]||'Элемент');
+  $('#dSub').textContent = value || ('#'+id);
+  $('#dBody').innerHTML = '<div class="muted">Собираю данные…</div>';
+  NODE.history = [];
+  $('#chatlog').innerHTML = '<div class="msg s">ИИ видит всё, что собрано по этому элементу: версии, CVE, оценки, доказательства и связи.</div>';
+  NODE.element = {type:kind, value:value||'', id:id?String(id):'', port:(meta&&(meta['порт']||meta.port))||''};
+  let card = {};
+  try{
+    const qs = new URLSearchParams({type:NODE.element.type, value:NODE.element.value||'', id:NODE.element.id||'', port:NODE.element.port||''});
+    card = await api('/api/scan/'+sid+'/node?'+qs.toString());
+  }catch(e){ card = {ошибка:String(e)}; }
+  renderCard(card);
+  refreshButtons();
+  try{ const st = await api('/api/ai/status');
+    $('#aiMode').textContent = 'ИИ: ' + st['режим'] + ' · ' + st['модель'] + (st['настроена'] ? '' : ' — ' + st['подсказка']);
+  }catch(e){}
+}
+
+function closeDrawer(){ $('#drawer').classList.remove('on'); if(NODE.stream){ NODE.stream.abort(); NODE.stream=null; } }
+
+function renderCard(card){
+  const d = card['данные']||{}; const body = $('#dBody');
+  const esc2 = x => esc(String(x));
+  let h = '';
+  const fid = (NODE.element && NODE.element.id) || '';
+  if(d['что'] || d['приоритет']){                      // находка
+    if(fid) h += `<div class="row" style="gap:6px;margin-bottom:8px">
+      <span class="small">статус:</span> ${statusBadge(d['статус']?({'открыто':'open','подтверждено':'confirmed','ложное срабатывание':'false','принято в риск':'accepted','закрыто':'fixed'}[d['статус']]||'open'):'open')}
+      <span class="grow"></span>
+      <button class="btn sec sm" onclick="triage(STATE.scan,${fid||0})">Мнение ИИ</button>
+      <button class="btn sec sm" onclick="recheck()">Проверить заново</button></div>
+      <div id="recheckbox" class="small"></div>`;
+    h += `<div class="row" style="gap:8px;flex-wrap:wrap">`;
+    if(d['приоритет']) h += `<span class="pill ${esc2(d['приоритет'])}">${esc2(d['приоритет'])}</span>`;
+    if(d['оценка']!=null) h += `<span class="tag">оценка: ${esc2(d['оценка'])}</span>`;
+    if(d['в списке KEV']) h += `<span class="tag" style="color:#ff9d9d">эксплуатируется в атаках</span>`;
+    h += `</div><h3 style="margin:10px 0 6px">${esc2(d['что']||'')}</h3>`;
+    h += `<dl>` + [['Актив',d['актив']],['Порт',d['порт']],['Сервис',d['сервис']],['Продукт',d['продукт']],
+        ['Версия',d['версия']],['CVE',d['CVE']],['CVSS',d['CVSS']],['EPSS',d['EPSS']],['Источник',d['источник находки']]]
+        .filter(([k,v])=>v!==undefined&&v!==null&&v!=='').map(([k,v])=>`<dt>${k}</dt><dd>${esc2(v)}</dd>`).join('') + `</dl>`;
+    if(d['CVE']) h += `<div style="margin:6px 0 10px"><a href="https://nvd.nist.gov/vuln/detail/${esc2(d['CVE'])}" target="_blank">Открыть в NVD</a></div>`;
+    if(d['почему важен']) h += `<div class="small muted" style="margin:8px 0">Почему такая оценка: ${esc2(d['почему важен'])}</div>`;
+    const ev = d['доказательство']||{};
+    const evLines = Object.entries(ev).filter(([k,v])=>v).slice(0,8);
+    if(evLines.length) h += `<details style="margin:8px 0"><summary class="small">Доказательства (${evLines.length})</summary>` +
+      evLines.map(([k,v])=>`<div class="small" style="margin:5px 0"><b>${esc2(k)}</b><pre style="max-height:160px">${esc2(String(v).slice(0,900))}</pre></div>`).join('') + `</details>`;
+  } else {                                             // актив
+    h += `<dl>` + [['Актив',d['актив']],['Тип',d['тип']]].filter(([k,v])=>v).map(([k,v])=>`<dt>${k}</dt><dd>${esc2(v)}</dd>`).join('');
+    const m = d['характеристики']||{};
+    h += Object.entries(m).filter(([k,v])=>v!==null&&v!==''&&typeof v!=='object').slice(0,14)
+         .map(([k,v])=>`<dt>${esc2(k)}</dt><dd>${esc2(String(v).slice(0,300))}</dd>`).join('');
+    h += `</dl>`;
+    if(d['актив']) h += `<div class="card" style="background:#0f1620;margin:10px 0 0;padding:11px">
+      <div class="small" style="margin-bottom:6px">Контекст заказчика (влияет на приоритет находок)</div>
+      <label style="margin:0">Критичность
+        <select id="rg_crit"><option value="">не задана</option><option value="critical">критичный актив</option>
+          <option value="normal">обычный</option><option value="low">некритичный</option></select></label>
+      <label style="margin:0">Доступ
+        <select id="rg_exp"><option value="">не задан</option><option value="external">должен быть снаружи</option>
+          <option value="internal">внутренний (не должен светиться)</option></select></label>
+      <label style="margin:0">Ответственный <input id="rg_owner" placeholder="например: отдел разработки"></label>
+      <label style="margin:0">Метки (через запятую) <input id="rg_tags" placeholder="например: платежи, 152-ФЗ, прод"></label>
+      <label style="margin:0">Заметка <input id="rg_note" placeholder="что важно знать про актив"></label>
+      <button class="btn sm" style="margin-top:6px" onclick="saveRegistry('${esc(d['актив']||'')}')">Сохранить</button>
+      <span class="small muted" id="rg_msg" style="margin-left:8px"></span></div>`;
+  }
+  const links = card['связи']||[];
+  if(links.length) h += `<h3 style="margin:14px 0 6px;font-size:13px">Связи (${links.length})</h3><div>` +
+    links.slice(0,15).map(l=>`<div class="small" style="margin:3px 0">${esc2(l)}</div>`).join('') + `</div>`;
+  const cf = card['находки_актива']||[];
+  if(cf.length) h += `<h3 style="margin:14px 0 6px;font-size:13px">Находки на этом объекте (${cf.length})</h3>` +
+    cf.map(f=>`<div class="small" style="margin:5px 0;cursor:pointer" onclick="openNode('finding','',null,${f.id})">
+      <span class="pill ${esc2(f.priority)}">${esc2(f.priority)}</span> ${esc2(f.title)}${f.cve_id?` <span class="muted">${esc2(f.cve_id)}</span>`:''}</div>`).join('');
+  const fix = card['рекомендовано_закрыть'];
+  if(fix && fix['шаги']) h += `<div style="margin-top:12px;border-left:3px solid var(--p3);padding:9px 13px;background:#0f1b16;border-radius:0 8px 8px 0">
+      <div style="font-weight:600;margin-bottom:6px">Как закрыть — ${esc2(fix['класс']||'')}</div>
+      <ul style="margin:0 0 8px 18px;padding:0">${fix['шаги'].map(x=>`<li>${esc2(x)}</li>`).join('')}</ul>
+      ${(fix['команды']||[]).length?`<pre style="max-height:200px">${esc2(fix['команды'].join('\n\n'))}</pre>`:''}</div>`;
+  if(card['ошибка']) h += `<div class="muted">${esc2(card['ошибка'])}</div>`;
+  body.innerHTML = h || '<div class="muted">По этому элементу пока нет данных.</div>';
+}
+
+const CHIPS = {
+  finding: ['Простыми словами: что это и чем опасно?','Как закрыть по шагам?','Как проверить, что закрыто?','Что спросить у администратора?'],
+  asset:   ['Что это за объект по данным анализа?','Какие тут самые опасные находки?','С чего начать закрытие?','Какие связи важны?'],
+  default: ['Что это и чем опасно?','Что делать в первую очередь?','Как проверить результат?']
+};
+function refreshButtons(){
+  const t = NODE.element ? NODE.element.type : 'default';
+  const chips = CHIPS[t] || CHIPS.default;
+  $('#chips').innerHTML = chips.map(c=>`<span class="chip" onclick="quickAsk(${JSON.stringify(c).replace(/"/g,'&quot;')})">${esc(c)}</span>`).join('');
+}
+
+function mdMini(x){
+  let h = esc(x);
+  h = h.replace(/```([\s\S]*?)```/g, (m,c)=>`<pre>${c.trim()}</pre>`);
+  h = h.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+  h = h.replace(/^\s*[*\-]\s+(.*)$/gm, '• $1');
+  h = h.replace(/\n/g,'<br>');
+  return h;
+}
+
+function quickAsk(text){ $('#q').value = text; askAI(); }
+
+async function askAI(){
+  const q = $('#q').value.trim(); if(!q) return;
+  if(!NODE.element){ $('#chatlog').innerHTML += '<div class="msg s">Сначала откройте элемент (клик по узлу графа или кнопка «ИИ» в находке).</div>'; return; }
+  $('#q').value = ''; $('#askBtn').disabled = true;
+  const log = $('#chatlog');
+  log.innerHTML += `<div class="msg u">${esc(q)}</div>`;
+  const a = document.createElement('div'); a.className = 'msg a'; a.innerHTML = '<span class="muted">…</span>';
+  log.appendChild(a); log.scrollTop = log.scrollHeight;
+  let acc = '';
+  try{
+    const resp = await fetch('/api/ai/chat', {method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({scan_id:STATE.scan, element:NODE.element, history:NODE.history.slice(-8), question:q})});
+    const reader = resp.body.getReader(); const dec = new TextDecoder(); let buf = '';
+    NODE.stream = {abort:()=>{ try{reader.cancel();}catch(e){} }};
+    while(true){
+      const {done, value} = await reader.read(); if(done) break;
+      buf += dec.decode(value, {stream:true});
+      const parts = buf.split('\n\n'); buf = parts.pop();
+      for(const p of parts){
+        const lines = p.split('\n');
+        const ev = (lines.find(l=>l.startsWith('event:'))||'').slice(6).trim();
+        const dataLine = lines.find(l=>l.startsWith('data:'))||'';
+        let data = {}; try{ data = JSON.parse(dataLine.slice(5).trim()||'{}'); }catch(e){}
+        if(ev==='context'){ /* можно показать, что ушло модели */ }
+        else if(ev==='token'){ acc += (data.text||''); a.innerHTML = mdMini(acc); log.scrollTop = log.scrollHeight; }
+        else if(ev==='error'){ acc += '\n\n[ошибка: '+(data.text||'')+']'; a.innerHTML = mdMini(acc); }
+      }
+    }
+  }catch(e){ acc += '\n\n[сбой связи с ИИ: '+e+']'; a.innerHTML = mdMini(acc); }
+  NODE.stream = null; $('#askBtn').disabled = false;
+  if(acc){ NODE.history.push({role:'user', content:q}); NODE.history.push({role:'assistant', content:acc}); }
+}
+
+loadTargets();
+refreshStopState();
+setInterval(()=>{ if(!STATE.timer) loadTargets(); }, 20000);
+</script>
+</body>
+</html>

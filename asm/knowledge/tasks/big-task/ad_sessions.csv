@@ -1,0 +1,5 @@
+user,host,logon_type,started
+t.lead,app01,interactive,2026-10-06 08:12
+helpdesk1,HELPDESK-WS1,interactive,2026-10-06 09:03
+svc_deploy,srv-deploy,ssh,2026-10-05 22:40
+j.doe,app02,rdp,2026-10-01 11:15
